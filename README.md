@@ -30,7 +30,7 @@ An intelligent assistant that helps users plan grocery shopping by analyzing the
 ## Installation & Run
 
 ```bash
-git clone https://github.com/your-username/smart-grocery-assistant.git
+git clone https://github.com/Nehamethani/Freshly-Smart-Grocery-AI-Assistant.git
 cd smart-grocery-assistant
 ./mvnw spring-boot:run
 
