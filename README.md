@@ -21,8 +21,6 @@ An intelligent assistant that helps users plan grocery shopping by analyzing the
 ## How It Works
 
 - User enters preferences → AI suggests meals & grocery list
-- Inventory is tracked with expiry dates
-- Background threads send alerts for expiring items
 - Users can manage groceries using RESTful APIs
 
 ---
