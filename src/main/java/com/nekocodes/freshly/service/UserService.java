@@ -23,7 +23,7 @@ public class UserService {
     public User save(User user) {
         String encryptedPassword = passwordEncoder.encode(user.getPassword());
         System.out.println("Provided password: " + user.getPassword());
-        //user.setPassword(encryptedPassword);
+        user.setPassword(encryptedPassword);
         System.out.println("Encrypted password: " + encryptedPassword);
         return (User) repo.save(user);
     }
