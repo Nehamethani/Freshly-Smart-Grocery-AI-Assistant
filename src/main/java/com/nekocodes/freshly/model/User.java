@@ -17,6 +17,7 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+
     }
 
     public String getEmail() {
@@ -49,6 +50,7 @@ public class User {
                 "email='" + email + '\'' +
                 ", id='" + id + '\'' +
                 ", name='" + name + '\'' +
+                ", password='" + password + '\'' +
                 '}';
     }
 }

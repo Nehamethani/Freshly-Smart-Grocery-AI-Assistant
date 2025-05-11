@@ -14,17 +14,21 @@ public class UserController {
     UserService service;
 
     @PostMapping("/signup")
-    public User createUser(@RequestBody User user) {
+    public String createUser(@RequestBody User user) {
         return service.save(user);
+    }
+
+    @GetMapping("/login")
+    public String LoginUser(@RequestParam String email, String password)
+    {
+         return service.loginUser(email, password);
     }
 
     @GetMapping("/email/{email}")
     public User getUserEmail(@PathVariable String email) {
         System.out.println(service.getUserByEmail(email).toString());
 
-        if(service.getUserByEmail(email) == null)
-            return new User();
-        else
+
             return service.getUserByEmail(email);
     }
     @GetMapping("/name/{name}")
