@@ -14,7 +14,7 @@ public class UserController {
     UserService service;
 
     @PostMapping("/signup")
-    public User createUser(@RequestBody User user) {
+    public String createUser(@RequestBody User user) {
         return service.save(user);
     }
 
@@ -27,6 +27,12 @@ public class UserController {
         else
             return service.getUserByEmail(email);
     }
+
+    @GetMapping("/login")
+    public String getUserEmail(@RequestParam String email, @RequestParam String password) {
+        return service.loginUser(email,password);
+    }
+
     @GetMapping("/name/{name}")
     public User getUserName(@PathVariable String name) {
 
