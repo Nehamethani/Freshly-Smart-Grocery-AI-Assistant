@@ -4,13 +4,14 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import InputForm from './components/InputForm'
 import Navbar from './components/Navbar'
+import SignUp from './components/SignUp'
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
     <>
-    <InputForm />
+    <SignUp />
     </>
   )
 }
