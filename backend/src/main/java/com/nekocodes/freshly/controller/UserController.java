@@ -29,9 +29,9 @@ public class UserController {
             return service.getUserByEmail(email);
     }
 
-    @GetMapping("/login")
-    public String getUserEmail(@RequestParam String email, @RequestParam String password) {
-        return service.loginUser(email,password);
+    @PostMapping("/login")
+    public String getUserEmail(@RequestBody User user) {
+        return service.loginUser(user.getEmail(), user.getPassword());
     }
 
     @GetMapping("/name/{name}")

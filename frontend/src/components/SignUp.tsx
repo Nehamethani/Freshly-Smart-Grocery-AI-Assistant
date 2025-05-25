@@ -21,6 +21,12 @@ function AuthForm() {
     if (isLogin) {
       // Handle login logic here
       console.log("Logging in with:", user);
+      const response = await axios.post("http://localhost:8080/login", user);
+      if (response.status === 200) {
+        console.log("User logged in successfully:", response.data);
+      } else {
+        console.error("Error logging in:", response.data);
+      }
     } else {
       // Handle sign-up logic here
       console.log("Signing up with:", user);
