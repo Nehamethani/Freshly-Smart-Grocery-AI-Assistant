@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.6",
+    "axios": "^1.9.0",
     "multiselect-react-dropdown": "^2.0.25",
     "rc-slider": "^11.1.8",
     "react": "^19.1.0",
