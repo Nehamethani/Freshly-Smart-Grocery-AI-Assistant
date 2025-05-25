@@ -19,7 +19,6 @@ public class UserService {
 
     public User getUserByEmail(String email)
     {
-        System.out.println(repo.findByEmail(email));
         if(repo.findByEmail(email) == null)
             return new User();
         else {
@@ -32,33 +31,15 @@ public class UserService {
         return passwordEncoder.encode(password);
     }
 
-    boolean checkUserExists(String email)
+    public boolean checkUserExists(String email)
     {
-        System.out.println(email);
         User userFound=getUserByEmail(email);
-        System.out.println(userFound);
-        System.out.println(Objects.equals(userFound.getEmail(), email));
         return Objects.equals(userFound.getEmail(), email);
-
     }
-    public String save(User user) {
-
-        if(checkUserExists(user.getEmail()))
-            return "User already exists, please login.";
-        else {
-            //System.out.println(user.getPassword());
+    public void save(User user) {
             String encryptedPassword = encryptPassword(user.getPassword());
             user.setPassword(encryptedPassword);
             repo.save(user);
-            //System.out.println(user.getPassword());
-            //System.out.println("Encrypted password: ");
-            return "Successfully signed up";
-        }
-
-
-
-
-
     }
 
     public String loginUser(String email, String password)
@@ -78,6 +59,5 @@ public class UserService {
     public User getUserByName(String name) {
         return repo.findByName(name);
     }
-
 
 }

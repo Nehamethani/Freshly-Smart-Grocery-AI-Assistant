@@ -9,9 +9,7 @@ public class FreshlyApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(FreshlyApplication.class, args);
-
-
-		System.out.println("Hey I am freshly");
+		System.out.println("Freshly Backend service started");
 	}
 
 }
