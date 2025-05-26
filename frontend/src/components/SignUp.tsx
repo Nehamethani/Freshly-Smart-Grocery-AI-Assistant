@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import UserModel from "../models/UserModel";
 import axios from "axios";
+ import { ToastContainer, toast } from 'react-toastify';
 
 function AuthForm() {
   const [isLogin, setIsLogin] = useState(true);
@@ -25,16 +26,16 @@ function AuthForm() {
       if (response.status === 200) {
         console.log("User logged in successfully:", response.data);
       } else {
-        console.error("Error logging in:", response.data);
+        toast(response.data);
       }
     } else {
       // Handle sign-up logic here
       console.log("Signing up with:", user);
       const response = await axios.post("http://localhost:8080/signup", user);
-      if (response.status === 200) {
+      if (response.status === 201) {
         console.log("User signed up successfully:", response.data);
       } else {
-        console.error("Error signing up:", response.data);
+        toast(response.data);
       }
     }
     setUser({ ...UserModel });

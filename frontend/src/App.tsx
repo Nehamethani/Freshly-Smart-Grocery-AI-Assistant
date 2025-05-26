@@ -5,6 +5,8 @@ import './App.css'
 import InputForm from './components/InputForm'
 import Navbar from './components/Navbar'
 import SignUp from './components/SignUp'
+import 'react-toastify/dist/ReactToastify.css';
+
 
 function App() {
   const [count, setCount] = useState(0)
