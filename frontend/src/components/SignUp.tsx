@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import UserModel from "../models/UserModel";
 import axios from "axios";
- import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 
 function AuthForm() {
   const [isLogin, setIsLogin] = useState(true);
@@ -29,14 +29,26 @@ function AuthForm() {
         toast(response.data);
       }
     } else {
-      // Handle sign-up logic here
-      console.log("Signing up with:", user);
-      const response = await axios.post("http://localhost:8080/signup", user);
-      if (response.status === 201) {
-        console.log("User signed up successfully:", response.data);
-      } else {
-        toast(response.data);
+      try {
+        console.log("Signing up with:", user);
+        const response = await axios.post("http://localhost:8080/signup", user);
+        if (response.status === 200) {
+          console.log("User signed up successfully:", response.data);
+          toast.success("User signed up successfully");
+          // Optionally, redirect to login or home page
+          setIsLogin(true); // Switch to login form after successful sign-up
+        } else {
+          toast(response.data);
+        }
+      } catch (error) {
+        console.error("Error during sign-up:", error);
+        if (axios.isAxiosError(error)) {
+          toast.error(error.response?.data || "An error occurred during sign-up");
+        }
+
       }
+      // Handle sign-up logic here
+
     }
     setUser({ ...UserModel });
   };
