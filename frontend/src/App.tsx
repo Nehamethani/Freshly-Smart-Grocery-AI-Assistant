@@ -17,7 +17,9 @@ function App() {
     <>
     {/* <SignUp />
     <ToastContainer/> */}
-    <Chat/>
+    {/* <Chat/> */}
+    <InputForm />
+
     </>
   )
 }
