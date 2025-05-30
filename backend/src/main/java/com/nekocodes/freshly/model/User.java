@@ -1,9 +1,16 @@
 package com.nekocodes.freshly.model;
 
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "users")
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
 public class User {
     @Id
     private String id;
@@ -11,44 +18,14 @@ public class User {
     private String email;
     private String password;
 
-    public String getPassword() {
-        return password;
-    }
+    //values after successful signup
+    private int age;
+    private String gender;
+    private double height;
+    private double weight;
+    private String activityLevel;
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    //dietInfo class
+    private DietInfo dietInfo;
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "email='" + email + '\'' +
-                ", id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                '}';
-    }
 }

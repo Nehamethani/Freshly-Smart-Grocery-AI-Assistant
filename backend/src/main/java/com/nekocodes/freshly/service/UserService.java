@@ -3,11 +3,13 @@ package com.nekocodes.freshly.service;
 import com.nekocodes.freshly.model.User;
 import com.nekocodes.freshly.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.Document;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -58,6 +60,26 @@ public class UserService {
 
     public User getUserByName(String name) {
         return repo.findByName(name);
+    }
+
+    public ResponseEntity<?> updateUserDetails(String email, User updatedUserRequest){
+        Optional<User> updatedUser= Optional.ofNullable(getUserByEmail(email));
+
+        if(updatedUser.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+        User user=updatedUser.get();
+
+        user.setAge(updatedUserRequest.getAge());
+        user.setGender(updatedUserRequest.getGender());
+        user.setHeight(updatedUserRequest.getHeight());
+        user.setWeight(updatedUserRequest.getWeight());
+        user.setActivityLevel(updatedUserRequest.getActivityLevel());
+        user.setDietInfo(updatedUserRequest.getDietInfo());
+
+        repo.save(user);
+        return ResponseEntity.ok(user);
+
     }
 
 }

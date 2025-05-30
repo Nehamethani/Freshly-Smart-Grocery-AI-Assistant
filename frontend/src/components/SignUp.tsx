@@ -1,17 +1,16 @@
 import React, { useState } from "react";
-import UserModel from "../models/UserModel";
+import UserLogin from "../models/UserLogin";
 import axios from "axios";
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, toast } from "react-toastify";
 
 function AuthForm() {
   const [isLogin, setIsLogin] = useState(true);
+  const [user, setUser] = useState({ ...UserLogin });
 
   const toggleForm = () => {
-    setUser({ ...UserModel }); // Reset user state when toggling
+    setUser({ ...UserLogin }); // Reset user state when toggling
     setIsLogin(!isLogin);
   };
-
-  const [user, setUser] = useState({ ...UserModel });
 
   const handleChange = (e: { target: { name: any; value: any } }) => {
     setUser({ ...user, [e.target.name]: e.target.value });
@@ -43,14 +42,14 @@ function AuthForm() {
       } catch (error) {
         console.error("Error during sign-up:", error);
         if (axios.isAxiosError(error)) {
-          toast.error(error.response?.data || "An error occurred during sign-up");
+          toast.error(
+            error.response?.data || "An error occurred during sign-up"
+          );
         }
-
       }
       // Handle sign-up logic here
-
     }
-    setUser({ ...UserModel });
+    setUser({ ...UserLogin });
   };
   return (
     <div>

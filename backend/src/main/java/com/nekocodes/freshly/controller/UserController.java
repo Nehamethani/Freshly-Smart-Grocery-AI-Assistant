@@ -52,5 +52,10 @@ public class UserController {
             return service.getUserByName(name);
     }
 
+    @PutMapping("/update/{email}")
+    public ResponseEntity<?> updateUserDetails(@PathVariable String email, @RequestBody User updatedUserRequest){
+        return service.updateUserDetails(email, updatedUserRequest);
+    }
+
 
 }
