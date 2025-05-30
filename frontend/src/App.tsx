@@ -7,6 +7,7 @@ import Navbar from './components/Navbar'
 import SignUp from './components/SignUp'
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify'
+import Chat from './components/Chat'
 
 
 function App() {
@@ -14,8 +15,11 @@ function App() {
 
   return (
     <>
-    <SignUp />
-    <ToastContainer/>
+    {/* <SignUp />
+    <ToastContainer/> */}
+    {/* <Chat/> */}
+    <InputForm />
+
     </>
   )
 }
