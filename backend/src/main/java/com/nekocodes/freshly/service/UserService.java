@@ -73,6 +73,8 @@ public class UserService {
         }
         else {
             User user = getUserByEmail(email);
+            if(updatedUserRequest.getName()!=null)
+                user.setName(updatedUserRequest.getName());
             if(updatedUserRequest.getAge()!=0)
                 user.setAge(updatedUserRequest.getAge());
             if(updatedUserRequest.getGender()!=null)
