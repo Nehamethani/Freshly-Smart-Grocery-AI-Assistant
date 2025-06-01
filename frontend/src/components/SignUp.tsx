@@ -1,9 +1,13 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import UserLogin from "../models/UserLogin";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 function AuthForm() {
+
+  const navigate = useNavigate();
+
   const [isLogin, setIsLogin] = useState(true);
   const [user, setUser] = useState({ ...UserLogin });
 
@@ -31,7 +35,8 @@ function AuthForm() {
       try {
         console.log("Signing up with:", user);
         const response = await axios.post("http://localhost:8080/signup", user);
-        if (response.status === 200) {
+        console.log("Response:", response);
+        if (response.status === 201) {
           console.log("User signed up successfully:", response.data);
           toast.success("User signed up successfully");
           // Optionally, redirect to login or home page
@@ -46,8 +51,10 @@ function AuthForm() {
             error.response?.data || "An error occurred during sign-up"
           );
         }
+        
       }
-      // Handle sign-up logic here
+      console.log("calling navigate:", user);
+      navigate('/update', { state: { email: user.email } });
     }
     setUser({ ...UserLogin });
   };

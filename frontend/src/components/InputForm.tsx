@@ -1,12 +1,15 @@
-import Multiselect from "multiselect-react-dropdown";
+
 import Select from "react-select";
-import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
 import { useState } from "react";
-
-
+import axios from "axios";
+import { useLocation } from "react-router-dom";
 
 const InputForm = () => {
+
+    const location = useLocation();
+    const email = location.state?.email;
+  
     const [name, setName] = useState('');
     const [age, setAge] = useState('');
     const [gender, setGender] = useState('');
@@ -47,6 +50,13 @@ const InputForm = () => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         console.log('New user' + JSON.stringify(newUser));
+        const response = axios.put(`http://localhost:8080/update/${email}`, newUser)
+            .then(response => {
+                console.log('Response:', response.data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
     }
 
     return (
