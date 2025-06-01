@@ -87,24 +87,22 @@ public class UserService {
             //updating dietinfo values
             if(updatedUserRequest.getDietInfo()!=null){
                 DietInfo dietInfo=user.getDietInfo();
-                if(dietInfo==null){
-                    user.setDietInfo(updatedUserRequest.getDietInfo());
-                }
-                else {
-                    if (dietInfo.getDietType() != null)
+                DietInfo getDietInfo = updatedUserRequest.getDietInfo();
+
+                    if (getDietInfo.getDietType() != null)
                         dietInfo.setDietType(updatedUserRequest.getDietInfo().getDietType());
-                    if (dietInfo.getGoal() != null)
+                    if (getDietInfo.getGoal() != null)
                         dietInfo.setGoal(updatedUserRequest.getDietInfo().getGoal());
-                    if (dietInfo.getLikedFood() != null)
+                    if (getDietInfo.getLikedFood() != null)
                         dietInfo.setLikedFood(updatedUserRequest.getDietInfo().getLikedFood());
-                    if (dietInfo.getDislikedFood() != null)
+                    if (getDietInfo.getDislikedFood() != null)
                         dietInfo.setDislikedFood(updatedUserRequest.getDietInfo().getDislikedFood());
-                    if (dietInfo.getCuisines() != null)
+                    if (getDietInfo.getCuisines() != null)
                         dietInfo.setCuisines(updatedUserRequest.getDietInfo().getCuisines());
-                    if (dietInfo.getAllergies() != null)
+                    if (getDietInfo.getAllergies() != null)
                         dietInfo.setAllergies(updatedUserRequest.getDietInfo().getAllergies());
                     user.setDietInfo(dietInfo);
-                }
+
             }
 
             repo.save(user);

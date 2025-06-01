@@ -27,5 +27,4 @@ public class User {
 
     //dietInfo class
     private DietInfo dietInfo;
-
 }
