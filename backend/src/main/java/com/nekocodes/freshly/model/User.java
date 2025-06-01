@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
@@ -26,5 +27,6 @@ public class User {
     private String activityLevel;
 
     //dietInfo class
-    private DietInfo dietInfo;
+    @Builder.Default
+    private DietInfo dietInfo = new DietInfo();
 }

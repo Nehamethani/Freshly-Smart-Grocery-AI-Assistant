@@ -88,7 +88,7 @@ public class UserService {
 
             //updating dietinfo values
             if(updatedUserRequest.getDietInfo()!=null){
-                DietInfo dietInfo=new DietInfo();
+                DietInfo dietInfo=user.getDietInfo();
                 DietInfo getDietInfo = updatedUserRequest.getDietInfo();
 
                     if (getDietInfo.getDietType() != null)
