@@ -1,7 +1,9 @@
 package com.nekocodes.freshly.service;
 
+import com.nekocodes.freshly.model.DietInfo;
 import com.nekocodes.freshly.model.User;
 import com.nekocodes.freshly.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -11,6 +13,7 @@ import javax.swing.text.Document;
 import java.util.Objects;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class UserService {
 
@@ -63,23 +66,50 @@ public class UserService {
     }
 
     public ResponseEntity<?> updateUserDetails(String email, User updatedUserRequest){
-        Optional<User> updatedUser= Optional.ofNullable(getUserByEmail(email));
-
-        if(updatedUser.isEmpty()){
+        boolean emailExists=checkUserExists(email);
+        if(!emailExists){
+            log.info("Email does not exist");
             return ResponseEntity.notFound().build();
         }
-        User user=updatedUser.get();
+        else {
+            User user = getUserByEmail(email);
+            if(updatedUserRequest.getAge()!=0)
+                user.setAge(updatedUserRequest.getAge());
+            if(updatedUserRequest.getGender()!=null)
+                user.setGender(updatedUserRequest.getGender());
+            if(updatedUserRequest.getHeight()!=0)
+                user.setHeight(updatedUserRequest.getHeight());
+            if(updatedUserRequest.getWeight()!=0)
+                user.setWeight(updatedUserRequest.getWeight());
+            if(updatedUserRequest.getActivityLevel()!=null)
+                user.setActivityLevel(updatedUserRequest.getActivityLevel());
 
-        user.setAge(updatedUserRequest.getAge());
-        user.setGender(updatedUserRequest.getGender());
-        user.setHeight(updatedUserRequest.getHeight());
-        user.setWeight(updatedUserRequest.getWeight());
-        user.setActivityLevel(updatedUserRequest.getActivityLevel());
-        user.setDietInfo(updatedUserRequest.getDietInfo());
+            //updating dietinfo values
+            if(updatedUserRequest.getDietInfo()!=null){
+                DietInfo dietInfo=user.getDietInfo();
+                if(dietInfo==null){
+                    user.setDietInfo(updatedUserRequest.getDietInfo());
+                }
+                else {
+                    if (dietInfo.getDietType() != null)
+                        dietInfo.setDietType(updatedUserRequest.getDietInfo().getDietType());
+                    if (dietInfo.getGoal() != null)
+                        dietInfo.setGoal(updatedUserRequest.getDietInfo().getGoal());
+                    if (dietInfo.getLikedFood() != null)
+                        dietInfo.setLikedFood(updatedUserRequest.getDietInfo().getLikedFood());
+                    if (dietInfo.getDislikedFood() != null)
+                        dietInfo.setDislikedFood(updatedUserRequest.getDietInfo().getDislikedFood());
+                    if (dietInfo.getCuisines() != null)
+                        dietInfo.setCuisines(updatedUserRequest.getDietInfo().getCuisines());
+                    if (dietInfo.getAllergies() != null)
+                        dietInfo.setAllergies(updatedUserRequest.getDietInfo().getAllergies());
+                    user.setDietInfo(dietInfo);
+                }
+            }
 
-        repo.save(user);
-        return ResponseEntity.ok(user);
-
+            repo.save(user);
+            return ResponseEntity.ok(user);
+        }
     }
 
 }

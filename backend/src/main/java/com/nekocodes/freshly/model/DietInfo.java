@@ -1,16 +1,20 @@
 package com.nekocodes.freshly.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class DietInfo {
     private List<String> cuisines;
     private List<String> allergies;
-    private String goal;
-    private String dietType;
+    private String goal; //to be ENUM
+    private String dietType; //to be ENUM
     private String likedFood;
     private String dislikedFood;
 }
