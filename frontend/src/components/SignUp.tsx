@@ -54,7 +54,7 @@ function AuthForm() {
         
       }
       console.log("calling navigate:", user);
-      navigate('/update', { state: { email: user.email } });
+      navigate('/update', { state: user });
     }
     setUser({ ...UserLogin });
   };

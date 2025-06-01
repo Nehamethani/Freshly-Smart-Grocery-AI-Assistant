@@ -7,8 +7,9 @@ import { useLocation } from "react-router-dom";
 const InputForm = () => {
   const location = useLocation();
   const email = location.state?.email;
+  const userName = location.state?.name;
 
-  const [name, setName] = useState("");
+  const [name, setName] = useState(`${userName}`);
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("");
   const [height, setHeight] = useState("");
@@ -16,8 +17,8 @@ const InputForm = () => {
   const [activityLevel, setActivityLevel] = useState("");
   const [cuisines, setCuisines] = useState<any[]>([]);
   const [allergies, setAllergies] = useState<any[]>([]);
-  const [goal, setGoal] = useState("");
-  const [dietType, setDietType] = useState("");
+  const [goal, setGoal] = useState<any>();
+  const [dietType, setDietType] = useState<any>();
   const [likedFood, setLikedFood] = useState("");
   const [dislikedFood, setDislikedFood] = useState("");
 
@@ -31,8 +32,8 @@ const InputForm = () => {
   const dietInfo = {
     cuisines: cuisines.map((option) => option.value),
     allergies: allergies.map((option) => option.value),
-    goal: goal,
-    dietType: dietType,
+    goal: goal?.value,
+    dietType: dietType?.value,
     likedFood: likedFood,
     dislikedFood: dislikedFood,
   };
@@ -183,8 +184,8 @@ const InputForm = () => {
                   { value: "milk", label: "milk" },
                   { value: "NA", label: "No allergies" },
                 ]}
-                className="mt-1 text-indigo-500 bg-indigo-500 mb-4"
-                classNamePrefix="select"
+                className="mt-1 text-indigo-500 mb-4"
+                classNamePrefix="custom-select"
                 placeholder="Select Allergies"
               />
             </label>
