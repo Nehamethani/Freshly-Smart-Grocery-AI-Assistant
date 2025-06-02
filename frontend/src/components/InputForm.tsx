@@ -22,6 +22,40 @@ const InputForm = () => {
   const [likedFood, setLikedFood] = useState("");
   const [dislikedFood, setDislikedFood] = useState("");
 
+  // handling height validation error 80 to 250 cm
+  const [heightError, setHeightError] = useState("");
+  const handleHeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setHeight(value);
+    if (isNaN(Number(value)) || Number(value) <= 80 || Number(value) > 250) {
+      setHeightError("Height must be a number between 80 and 250 cm.");
+    } else {
+      setHeightError("");
+    }
+  };
+  //handling weight validation error 20 to 250 kg
+  const [weightError, setWeightError] = useState("");
+  const handleWeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setWeight(value);
+    if (isNaN(Number(value)) || Number(value) <= 20 || Number(value) > 250) {
+      setWeightError("Weight must be a number between 20 and 250 kg.");
+    } else {
+      setWeightError("");
+    }
+  };
+  // handling age validation error 0 to 120 years
+  const [ageError, setAgeError] = useState("");
+  const handleAgeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setAge(value);
+    if (isNaN(Number(value)) || Number(value) < 0 || Number(value) > 120) {
+      setAgeError("Age must be a number between 0 and 120.");
+    } else {
+      setAgeError("");
+    }
+  };
+  // Handle changes for cuisines and allergies
   const handleChange = (selectedOptions: any) => {
     setCuisines(selectedOptions);
   };
@@ -84,10 +118,13 @@ const InputForm = () => {
               <input
                 type="text"
                 value={age}
-                onChange={(e) => setAge(e.target.value)}
+                onChange={handleAgeChange}
                 id="age"
                 className="border border-gray-300 p-2 rounded w-full"
               />
+              {ageError && (
+                <p className="text-red-500 text-sm mt-1">{ageError}</p>
+              )}
             </div>
             <div className="mb-4">
               <label htmlFor="gender" className="block text-gray-700">
@@ -112,9 +149,12 @@ const InputForm = () => {
                 type="text"
                 id="height"
                 value={height}
-                onChange={(e) => setHeight(e.target.value)}
+                onChange={handleHeightChange}
                 className="border border-gray-300 p-2 rounded w-full"
               />
+              {heightError && (
+                <p className="text-red-500 text-sm mt-1">{heightError}</p>
+              )}
             </div>
             <div className="mb-4">
               <label htmlFor="weight" className="block text-gray-700">
@@ -123,10 +163,13 @@ const InputForm = () => {
               <input
                 type="text"
                 value={weight}
-                onChange={(e) => setWeight(e.target.value)}
+                onChange={handleWeightChange}
                 id="weight"
                 className="border border-gray-300 p-2 rounded w-full"
               />
+              {weightError && (
+                <p className="text-red-500 text-sm mt-1">{weightError}</p>
+              )}
             </div>
             <div className="mb-4">
               <label htmlFor="activity-level" className="block text-gray-700">
