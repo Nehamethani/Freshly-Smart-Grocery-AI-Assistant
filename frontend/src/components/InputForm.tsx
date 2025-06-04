@@ -3,6 +3,7 @@ import "rc-slider/assets/index.css";
 import { useState } from "react";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
+import Navbar from "./Navbar";
 
 const InputForm = () => {
   const location = useLocation();
@@ -94,9 +95,11 @@ const InputForm = () => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-8rem)] flex flex-col items-center justify-center w-full h-full aspect-[2/1]">
-      <div className="w-full max-w-4xl flex items-center justify-center h-5/6 relative">
-        <div className="flex-1 aspect-square w-1/2 p-6 bg-white shadow-md rounded-sm">
+    <>
+    <Navbar />
+    <div className="min-h-[calc(100vh-8rem)] flex flex-col items-center justify-center w-full h-[40rem] p-6">
+      <div className="w-full max-w-4xl flex items-center justify-center h-[40rem] relative">
+        <div className="flex-1 aspect-square w-1/2 p-6 bg-white shadow-md h-[40rem] rounded-sm">
           <h2 className="text-lg mb-4">Personal Information</h2>
           <form>
             <div className="mb-4">
@@ -190,7 +193,7 @@ const InputForm = () => {
             </div>
           </form>
         </div>
-        <div className="flex-1 aspect-square w-1/2 p-6 bg-indigo-500 text-white shadow-md rounded-sm">
+        <div className="flex-1 aspect-square w-1/2 p-6 bg-indigo-500 text-white shadow-md h-[40rem] rounded-sm">
           <h2 className="text-lg mb-4">Dietary Information</h2>
           <form>
             <label className="h-25">
@@ -302,11 +305,12 @@ const InputForm = () => {
       </div>
       <button
         onClick={handleSubmit}
-        className="block mx-auto bottom-4 right-4 bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600"
+        className="block mx-auto my-1 bottom-4 right-4 bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600"
       >
         Submit
       </button>
     </div>
+    </>
   );
 };
 

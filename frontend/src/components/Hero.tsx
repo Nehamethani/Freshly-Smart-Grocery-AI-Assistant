@@ -16,8 +16,8 @@ const Hero = () => {
             Your one-stop shop for all your grocery needs. Start by Filling the Form!
           </p>
 
-          <Link to="/breakfast-form">
-            <button className="bg-green-600 hover:bg-green-700">Add Breakfast Items</button>
+          <Link to="/meal-form">
+            <button className="block mx-auto my-1 bottom-4 right-4 bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600">Get Meal Suggestion</button>
           </Link>
         </div>
 
