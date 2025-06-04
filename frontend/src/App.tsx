@@ -11,17 +11,17 @@ import viteLogo from "/vite.svg";
 import "./App.css";
 import InputForm from "./components/InputForm";
 import Navbar from "./components/Navbar";
-import SignUp from "./components/SignUp";
+import SignUp from "./components/AuthForm";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import HomePage from "./pages/HomePage";
-import MealForm from "./components/MealForm";
+
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />}/>
-      <Route path="/meal-form" element={<MealForm />} />
+      {/* <Route path="/preferences" element={<MealForm />} /> */}
       <Route path="/sign-in" element={<SignUp />} />
       <Route path="/update" element={<InputForm />} />
     </Routes>
