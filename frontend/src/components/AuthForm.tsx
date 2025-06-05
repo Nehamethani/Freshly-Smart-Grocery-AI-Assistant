@@ -115,7 +115,7 @@ function AuthForm() {
         if (response.status === 201) {
           console.log("User signed up successfully:", response.data);
         setSuccess("Sign Up  successful");
-         navigate('/update', { state: response.data });
+         navigate('/update', { state: signupData });
         } else {
           toast(response.data);
         }
