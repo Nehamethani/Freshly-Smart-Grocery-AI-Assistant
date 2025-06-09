@@ -1,142 +1,317 @@
-import Multiselect from "multiselect-react-dropdown";
 import Select from "react-select";
-import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
+import { useState } from "react";
+import axios from "axios";
+import { useLocation } from "react-router-dom";
+import Navbar from "./Navbar";
 
 const InputForm = () => {
+  const location = useLocation();
+  const email = location.state?.email;
+  const userName = location.state?.name;
 
-    return (
-        <div className='min-h-[calc(100vh-8rem)] flex flex-col items-center justify-center w-full h-full aspect-[2/1]'>
-            <div className='w-full max-w-4xl flex items-center justify-center h-5/6 relative'>
-                <div className='flex-1 aspect-square w-1/2 p-6 bg-white shadow-md rounded-sm'>
-                    <h2 className="text-lg mb-4">Personal Information</h2>
-                    <form>
-                        <div className='mb-4'>
-                            <label htmlFor="name" className='block text-gray-700'>Name:</label>
-                            <input type="text" id="name" className='border border-gray-300 p-2 rounded w-full' />
-                        </div>
-                        <div className='mb-4'>
-                            <label htmlFor="age" className='block text-gray-700'>Age:</label>
-                            <input type="text" id="age" className='border border-gray-300 p-2 rounded w-full' />
-                        </div>
-                        <div className='mb-4'>
-                            <label htmlFor="gender" className='block text-gray-700'>Gender:</label>
-                            <select name="gender" className="border border-gray-300 p-2 rounded w-full">
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
-                                <option value="NA">Don't want to share</option>
-                            </select>
-                        </div>
-                        <div className='mb-4'>
-                            <label htmlFor="height" className='block text-gray-700'>Height(cm):</label>
-                            <input type="text" id="height" className='border border-gray-300 p-2 rounded w-full' />
-                        </div>
-                        <div className='mb-4'>
-                            <label htmlFor="weight" className='block text-gray-700'>Weight(kg):</label>
-                            <input type="text" id="weight" className='border border-gray-300 p-2 rounded w-full' />
-                        </div>
-                        <div className='mb-4'>
-                            <label htmlFor="activity-level" className='block text-gray-700'>Activity Level:</label>
+  const [name, setName] = useState(`${userName}`);
+  const [age, setAge] = useState("");
+  const [gender, setGender] = useState("");
+  const [height, setHeight] = useState("");
+  const [weight, setWeight] = useState("");
+  const [activityLevel, setActivityLevel] = useState("");
+  const [cuisines, setCuisines] = useState<any[]>([]);
+  const [allergies, setAllergies] = useState<any[]>([]);
+  const [goal, setGoal] = useState<any>();
+  const [dietType, setDietType] = useState<any>();
+  const [likedFood, setLikedFood] = useState("");
+  const [dislikedFood, setDislikedFood] = useState("");
 
-                            <select name="activity-level" className="border border-gray-300 p-2 rounded w-full">
-                                <option value="sedentary">Sedentary</option>
-                                <option value="lightly-active">Lightly Active</option>
-                                <option value="active">Active</option>
-                                <option value="very-active">Very Active</option>
-                            </select>
-                        </div>
+  // handling height validation error 80 to 250 cm
+  const [heightError, setHeightError] = useState("");
+  const handleHeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setHeight(value);
+    if (isNaN(Number(value)) || Number(value) <= 80 || Number(value) > 250) {
+      setHeightError("Height must be a number between 80 and 250 cm.");
+    } else {
+      setHeightError("");
+    }
+  };
+  //handling weight validation error 20 to 250 kg
+  const [weightError, setWeightError] = useState("");
+  const handleWeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setWeight(value);
+    if (isNaN(Number(value)) || Number(value) <= 20 || Number(value) > 250) {
+      setWeightError("Weight must be a number between 20 and 250 kg.");
+    } else {
+      setWeightError("");
+    }
+  };
+  // handling age validation error 0 to 120 years
+  const [ageError, setAgeError] = useState("");
+  const handleAgeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setAge(value);
+    if (isNaN(Number(value)) || Number(value) < 0 || Number(value) > 120) {
+      setAgeError("Age must be a number between 0 and 120.");
+    } else {
+      setAgeError("");
+    }
+  };
+  // Handle changes for cuisines and allergies
+  const handleChange = (selectedOptions: any) => {
+    setCuisines(selectedOptions);
+  };
+  const handleAllergiesChange = (selectedOptions: any) => {
+    setAllergies(selectedOptions);
+  };
 
-                    </form>
-                </div>
-                <div className='flex-1 aspect-square w-1/2 p-6 bg-indigo-500 text-white shadow-md rounded-sm'>
-                      <h2 className="text-lg mb-4">Dietary Information</h2>
-                    <form>
-                        <label className="h-25">
-                            Favorite Cuisines:
-                            <Select
-                                isMulti
-                                name="cuisines"
-                                options={[
-                                    { value: 'Indian', label: 'Indian' },
-                                    { value: 'Italian', label: 'Italian' },
-                                    { value: 'Chinese', label: 'Chinese' },
-                                    { value: 'Mediterranean', label: 'Mediterranean' },
-                                    { value: 'Mexican', label: 'Mexican' },
-                                ]}
-                                className="mt-1 text-indigo-500 bg-indigo-500 mb-4"
-                                classNamePrefix="select"
-                                placeholder="Select Cuisines"
-                            />
-                        </label>
-                        <label className="block">
-                            Allergies:
-                            <Select
-                                isMulti
-                                name="allergies"
-                                options={[
-                                    { value: 'Peanuts', label: 'Peanuts' },
-                                    { value: 'Dairy', label: 'Dairy' },
-                                    { value: 'Gluten', label: 'Gluten' },
-                                    { value: 'Shellfish', label: 'Shellfish' },
-                                    { value: 'milk', label: 'milk' },
-                                    { value: 'NA', label: 'No allergies' }
-                                ]}
-                                className="mt-1 text-indigo-500 bg-indigo-500 mb-4"
-                                classNamePrefix="select"
-                                placeholder="Select Allergies"
+  const dietInfo = {
+    cuisines: cuisines.map((option) => option.value),
+    allergies: allergies.map((option) => option.value),
+    goal: goal?.value,
+    dietType: dietType?.value,
+    likedFood: likedFood,
+    dislikedFood: dislikedFood,
+  };
+  const newUser = {
+    name: name,
+    age: age,
+    gender: gender,
+    height: height,
+    weight: weight,
+    activityLevel: activityLevel,
+    dietInfo: dietInfo,
+  };
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("New user" + JSON.stringify(newUser));
+    const response = axios
+      .put(`http://localhost:8080/update/${email}`, newUser)
+      .then((response) => {
+        console.log("Response:", response.data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
 
-                            />
-                        </label>
-
-                        <label className="block">
-                            Go:
-                            <Select
-                                name="goal"
-                                options={[
-                                    { value: 'Weight loss', label: 'Weight Loss' },
-                                    { value: 'Weight Gain', label: 'Weight Gain' },
-                                    { value: 'Balanced Diet', label: 'Balanced Diet' },
-                                    { value: 'Boost Energy', label: 'Boost Energy' },
-                                    { value: 'No Goal Currently', label: 'No Goal Currently' }
-                                ]}
-                                className="mt-1 text-indigo-500 bg-indigo-500 mb-4"
-                                classNamePrefix="select"
-                                placeholder="Select Meals"
-                            />
-                        </label>
-                        <label className="block">
-                            Meals:
-                            <Select
-                                name="meals"
-                                options={[
-                                    { value: 'Breakfast', label: 'Breakfast' },
-                                    { value: 'Lunch', label: 'Lunch' },
-                                    { value: 'Dinner', label: 'Dinner' },
-                                    { value: 'Snacks', label: 'Snacks' },
-                                ]}
-                                className="mt-1 text-indigo-500 bg-indigo-500 mb-4"
-                                classNamePrefix="select"
-                                placeholder="Select Meals"
-                            />
-                        </label>
-                        <div className='mb-4'>
-                            <label htmlFor="mealsEveryday" className='block text-white'>How many meals per day? </label>
-                            <input type="text" id="mealsEveryday" className='border border-gray-300 p-2 rounded w-full' />
-                        </div>
-                        <div className='mb-4'>
-                            <label htmlFor="mealsTotal" className='block text-white'>How many days to plan for?</label>
-                            <input type="text" id="mealsTotal" className='border border-gray-300 p-2 rounded w-full' />
-                        </div>
-                       
-                    </form>
-                </div>
-               
+  return (
+    <>
+    <Navbar />
+    <div className="min-h-[calc(100vh-8rem)] flex flex-col items-center justify-center w-full h-[40rem] p-6">
+      <div className="w-full max-w-4xl flex items-center justify-center h-[40rem] relative">
+        <div className="flex-1 aspect-square w-1/2 p-6 bg-white shadow-md h-[40rem] rounded-sm">
+          <h2 className="text-lg mb-4">Personal Information</h2>
+          <form>
+            <div className="mb-4">
+              <label htmlFor="name" className="block text-gray-700">
+                Name:
+              </label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                id="name"
+                className="border border-gray-300 p-2 rounded w-full"
+              />
             </div>
-            <button className="block mx-auto bottom-4 right-4 bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600">
-                     Submit 
-                </button>                         
-        </div>
-    )
-}
+            <div className="mb-4">
+              <label htmlFor="age" className="block text-gray-700">
+                Age:
+              </label>
+              <input
+                type="text"
+                value={age}
+                onChange={handleAgeChange}
+                id="age"
+                className="border border-gray-300 p-2 rounded w-full"
+              />
+              {ageError && (
+                <p className="text-red-500 text-sm mt-1">{ageError}</p>
+              )}
+            </div>
+            <div className="mb-4">
+              <label htmlFor="gender" className="block text-gray-700">
+                Gender:
+              </label>
+              <select
+                name="gender"
+                value={gender}
+                onChange={(e) => setGender(e.target.value)}
+                className="border border-gray-300 p-2 rounded w-full"
+              >
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="NA">Don't want to share</option>
+              </select>
+            </div>
+            <div className="mb-4">
+              <label htmlFor="height" className="block text-gray-700">
+                Height(cm):
+              </label>
+              <input
+                type="text"
+                id="height"
+                value={height}
+                onChange={handleHeightChange}
+                className="border border-gray-300 p-2 rounded w-full"
+              />
+              {heightError && (
+                <p className="text-red-500 text-sm mt-1">{heightError}</p>
+              )}
+            </div>
+            <div className="mb-4">
+              <label htmlFor="weight" className="block text-gray-700">
+                Weight(kg):
+              </label>
+              <input
+                type="text"
+                value={weight}
+                onChange={handleWeightChange}
+                id="weight"
+                className="border border-gray-300 p-2 rounded w-full"
+              />
+              {weightError && (
+                <p className="text-red-500 text-sm mt-1">{weightError}</p>
+              )}
+            </div>
+            <div className="mb-4">
+              <label htmlFor="activity-level" className="block text-gray-700">
+                Activity Level:
+              </label>
 
-export default InputForm
+              <select
+                name="activity-level"
+                value={activityLevel}
+                onChange={(e) => setActivityLevel(e.target.value)}
+                className="border border-gray-300 p-2 rounded w-full"
+              >
+                <option value="sedentary">Sedentary</option>
+                <option value="lightly-active">Lightly Active</option>
+                <option value="active">Active</option>
+                <option value="very-active">Very Active</option>
+              </select>
+            </div>
+          </form>
+        </div>
+        <div className="flex-1 aspect-square w-1/2 p-6 bg-indigo-500 text-white shadow-md h-[40rem] rounded-sm">
+          <h2 className="text-lg mb-4">Dietary Information</h2>
+          <form>
+            <label className="h-25">
+              Favorite Cuisines:
+              <Select
+                isMulti
+                name="cuisines"
+                options={[
+                  { value: "Indian", label: "Indian" },
+                  { value: "Italian", label: "Italian" },
+                  { value: "Chinese", label: "Chinese" },
+                  { value: "Mediterranean", label: "Mediterranean" },
+                  { value: "Mexican", label: "Mexican" },
+                ]}
+                value={cuisines}
+                onChange={handleChange}
+                className="mt-1 text-indigo-500 bg-indigo-500 mb-4"
+                classNamePrefix="select"
+                placeholder="Select Cuisines"
+              />
+            </label>
+            <label className="block">
+              Allergies:
+              <Select
+                isMulti
+                name="allergies"
+                value={allergies}
+                onChange={handleAllergiesChange}
+                options={[
+                  { value: "Peanuts", label: "Peanuts" },
+                  { value: "Dairy", label: "Dairy" },
+                  { value: "Gluten", label: "Gluten" },
+                  { value: "Shellfish", label: "Shellfish" },
+                  { value: "milk", label: "milk" },
+                  { value: "NA", label: "No allergies" },
+                ]}
+                className="mt-1 text-indigo-500 mb-4"
+                classNamePrefix="custom-select"
+                placeholder="Select Allergies"
+              />
+            </label>
+
+            <label className="block">
+              Goal:
+              <Select
+                name="goal"
+                value={goal}
+                onChange={(selectedOption: any) => setGoal(selectedOption)}
+                options={[
+                  { value: "Weight loss", label: "Weight Loss" },
+                  { value: "Weight Gain", label: "Weight Gain" },
+                  { value: "Balanced Diet", label: "Balanced Diet" },
+                  { value: "Boost Energy", label: "Boost Energy" },
+                  { value: "No Goal Currently", label: "No Goal Currently" },
+                ]}
+                className="mt-1 text-indigo-500 bg-indigo-500 mb-4"
+                classNamePrefix="select"
+                placeholder="Select Weight Goal"
+              />
+            </label>
+            <label className="block">
+              Diet Type:
+              <Select
+                name="meals"
+                value={dietType}
+                onChange={(selectedOption: any) => setDietType(selectedOption)}
+                options={[
+                  { value: "Vegetarian", label: "Vegetarian" },
+                  { value: "Vegan", label: "Vegan" },
+                  { value: "Pescatarian", label: "Pescatarian" },
+                  { value: "Keto", label: "Keto" },
+                  { value: "Paleo", label: "Paleo" },
+                  { value: "Mediterranean", label: "Mediterranean" },
+                  { value: "Gluten Free", label: "Gluten Free" },
+                  { value: "Lactose Free", label: "Lactose Free" },
+                  { value: "No Specific Diet", label: "No Specific Diet" },
+                ]}
+                className="mt-1 text-indigo-500 bg-indigo-500 mb-4"
+                classNamePrefix="select"
+                placeholder="Select Diet Type"
+              />
+            </label>
+            <div className="mb-4">
+              <label htmlFor="likedFoods" className="block text-white">
+                What food do you like the most?
+              </label>
+              <input
+                type="text"
+                id="likedFoods"
+                value={likedFood}
+                onChange={(e) => setLikedFood(e.target.value)}
+                className="border border-gray-300 p-2 rounded w-full"
+              />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="dislikedFoods" className="block text-white">
+                What food do you dislike the most?
+              </label>
+              <input
+                type="text"
+                onChange={(e) => setDislikedFood(e.target.value)}
+                value={dislikedFood}
+                id="dislikedFoods"
+                className="border border-gray-300 p-2 rounded w-full"
+              />
+            </div>
+          </form>
+        </div>
+      </div>
+      <button
+        onClick={handleSubmit}
+        className="block mx-auto my-1 bottom-4 right-4 bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600"
+      >
+        Submit
+      </button>
+    </div>
+    </>
+  );
+};
+
+export default InputForm;

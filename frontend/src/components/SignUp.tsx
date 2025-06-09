@@ -1,16 +1,20 @@
-import React, { useState } from "react";
-import UserModel from "../models/UserModel";
+import  { useState } from "react";
+import UserLogin from "../models/UserLogin";
 import axios from "axios";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 function AuthForm() {
+
+  const navigate = useNavigate();
+
   const [isLogin, setIsLogin] = useState(true);
+  const [user, setUser] = useState({ ...UserLogin });
 
   const toggleForm = () => {
-    setUser({ ...UserModel }); // Reset user state when toggling
+    setUser({ ...UserLogin }); // Reset user state when toggling
     setIsLogin(!isLogin);
   };
-
-  const [user, setUser] = useState({ ...UserModel });
 
   const handleChange = (e: { target: { name: any; value: any } }) => {
     setUser({ ...user, [e.target.name]: e.target.value });
@@ -21,17 +25,38 @@ function AuthForm() {
     if (isLogin) {
       // Handle login logic here
       console.log("Logging in with:", user);
-    } else {
-      // Handle sign-up logic here
-      console.log("Signing up with:", user);
-      const response = await axios.post("http://localhost:8080/signup", user);
+      const response = await axios.post("http://localhost:8080/login", user);
       if (response.status === 200) {
-        console.log("User signed up successfully:", response.data);
+        console.log("User logged in successfully:", response.data);
       } else {
-        console.error("Error signing up:", response.data);
+        toast(response.data);
       }
+    } else {
+      try {
+        console.log("Signing up with:", user);
+        const response = await axios.post("http://localhost:8080/signup", user);
+        console.log("Response:", response);
+        if (response.status === 201) {
+          console.log("User signed up successfully:", response.data);
+          toast.success("User signed up successfully");
+          // Optionally, redirect to login or home page
+          setIsLogin(true); // Switch to login form after successful sign-up
+        } else {
+          toast(response.data);
+        }
+      } catch (error) {
+        console.error("Error during sign-up:", error);
+        if (axios.isAxiosError(error)) {
+          toast.error(
+            error.response?.data || "An error occurred during sign-up"
+          );
+        }
+        
+      }
+      console.log("calling navigate:", user);
+      navigate('/update', { state: user });
     }
-    setUser({ ...UserModel });
+    setUser({ ...UserLogin });
   };
   return (
     <div>

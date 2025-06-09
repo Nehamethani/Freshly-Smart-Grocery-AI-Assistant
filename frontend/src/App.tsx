@@ -1,19 +1,42 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import InputForm from './components/InputForm'
-import Navbar from './components/Navbar'
-import SignUp from './components/SignUp'
+import { useState } from "react";
+import reactLogo from "./assets/react.svg";
+import {
+  Route,
+  createBrowserRouter,
+  createRoutesFromElements,
+  RouterProvider,
+  Routes,
+} from "react-router-dom";
+import viteLogo from "/vite.svg";
+import "./App.css";
+import InputForm from "./components/InputForm";
+import Navbar from "./components/Navbar";
+import SignUp from "./components/SignUp";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
+import HomePage from "./pages/HomePage";
+import MealForm from "./components/MealForm";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-    <SignUp />
-    </>
-  )
+    <Routes>
+      <Route path="/" element={<HomePage />}/>
+      <Route path="/meal-form" element={<MealForm />} />
+      <Route path="/sign-in" element={<SignUp />} />
+      <Route path="/update" element={<InputForm />} />
+    </Routes>
+  );
+
+  //   const router = createBrowserRouter(
+  //   createRoutesFromElements(
+  //   <Route path='/' element={<HomePage/>}>
+  //   <Route path='/signup' element= {<SignUp/>}/>
+  //   <Route path='/update' element= {<InputForm/>}/>
+  //   </Route>
+
+  //   )
+  // );
+  // return <RouterProvider router={router} />;
 }
 
-export default App
+export default App;
