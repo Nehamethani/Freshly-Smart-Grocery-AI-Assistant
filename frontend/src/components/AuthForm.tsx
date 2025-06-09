@@ -69,7 +69,10 @@ function AuthForm() {
         console.log("User logged in successfully:", response.data);
         toast.success("Login successful");
         setSuccess("Login successful");
-        navigate('/profile', { state: loginData });
+        navigate('/profile', { state: { email: loginData.email } });
+      } else if (response.status === 401) {
+        setError("Invalid email or password");
+        toast.error("Invalid email or password");
       } else {
         toast.error(response.data);
       }
