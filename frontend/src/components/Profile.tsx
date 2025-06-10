@@ -31,8 +31,8 @@ type UserData = {
     allergies: string[]
     goal: string
     dietType: string
-    likedFoods: string
-    dislikedFoods: string
+    likedFood: string
+    dislikedFood: string
   }
 
 }
@@ -98,8 +98,8 @@ const Profile = () => {
       allergies: [],
       goal: '',
       dietType: '',
-      likedFoods: '',
-      dislikedFoods: ''
+      likedFood: '',
+      dislikedFood: ''
     }
   });
 
@@ -121,8 +121,8 @@ const Profile = () => {
             allergies: data.dietInfo?.allergies || [],
             goal: data.dietInfo?.goal || '',
             dietType: data.dietInfo?.dietType || '',
-            likedFoods: data.dietInfo?.likedFoods || '',
-            dislikedFoods: data.dietInfo?.dislikedFoods || ''
+            likedFood: data.dietInfo?.likedFood || '',
+            dislikedFood: data.dietInfo?.dislikedFood || ''
           }
         };
         setUserData(fetchedUserData);
@@ -144,6 +144,7 @@ const Profile = () => {
   }, [userData, isEditing]);
 
   const handleSaveProfile = () => {
+    console.log(JSON.stringify(editedData))
     const response = axios
       .put(`http://localhost:8080/update/${email}`, editedData)
       .then((response) => {
@@ -159,8 +160,9 @@ const Profile = () => {
     fetchUserData();
   }
 
-  function handleCancelEdit(): void {
-    throw new Error('Function not implemented.')
+  const handleCancelEdit = () => {
+    setEditedData(userData)
+    setIsEditing(false)
   }
 
   const handleEditing = (value: boolean) => {
@@ -406,13 +408,13 @@ const Profile = () => {
             </CardHeader>
             <CardContent className="space-y-6">
               <div>
-           
 
-                  <div className="flex flex-col space-y-6">
+
+                <div className="flex flex-col space-y-6">
                   <div>
                     <Label className="text-base font-medium">Allergies *</Label>
                     <p className="text-sm text-gray-600 mb-3">Select any food allergies you have</p>
-                    <div>
+                    <div className='flex gap-2'>
                       {allergyOptions.map((allergy) => (
                         <Button
                           key={allergy}
@@ -423,7 +425,7 @@ const Profile = () => {
                           className={
                             editedData.dietInfo.allergies.includes(allergy) ? "bg-red-600 hover:bg-red-700" : "hover:bg-red-50"
                           }
-                           disabled={!isEditing}
+                          disabled={!isEditing}
                         >
                           {allergy}
                         </Button>
@@ -434,7 +436,7 @@ const Profile = () => {
                   <div>
                     <Label className="text-base font-medium">Favorite Cuisines *</Label>
                     <p className="text-sm text-gray-600 mb-3">Select all cuisines you enjoy (choose multiple)</p>
-                    <div>
+                    <div className='flex justify-between'>
                       {cuisineOptions.map((cuisine) => (
                         <Button
                           key={cuisine}
@@ -447,7 +449,7 @@ const Profile = () => {
                               ? "bg-green-600 hover:bg-green-700"
                               : "hover:bg-green-50"
                           }
-                           disabled={!isEditing}
+                          disabled={!isEditing}
                         >
                           {cuisine}
                         </Button>
@@ -455,62 +457,74 @@ const Profile = () => {
                     </div>
                   </div>
 
-                   <div>
-                                  <Label htmlFor="dietType">Diet Type *</Label>
-                                  <Select
-                                    value={editedData.dietInfo.dietType}
-                                    onValueChange={(value) =>
-                                       setEditedData((prev) => (
-                                        { ...prev, 
-                                          dietInfo: { ...prev.dietInfo,
-                  
-                                          dietType: value }}))}
-                                           disabled={!isEditing}
-                                  >
-                                    <SelectTrigger>
-                                      <SelectValue placeholder="Select diet type" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                      {dietTypeOptions.map((diet) => (
-                                        <SelectItem key={diet} value={diet}>
-                                          {diet}
-                                        </SelectItem>
-                                      ))}
-                                    </SelectContent>
-                                  </Select>
-                                </div>
+                  <div>
+                    <Label htmlFor="dietType">Diet Type *</Label>
+                    <Select
+                      value={editedData.dietInfo.dietType}
+                      onValueChange={(value) =>
+                        setEditedData((prev) => (
+                          {
+                            ...prev,
+                            dietInfo: {
+                              ...prev.dietInfo,
 
-                                 <div>
-                                                <Label htmlFor="likedFoods">What food do you like the most? *</Label>
-                                                <Textarea
-                                                  id="likedFoods"
-                                                  placeholder="Tell us about your favorite foods, ingredients, or dishes..."
-                                                  value={editedData.dietInfo.likedFoods}
-                                                  onChange={(e) => 
-                                                    setEditedData((prev) => 
-                                                      ({ ...prev, 
-                                                        dietInfo: { ...prev.dietInfo,
-                                                        likedFoods: e.target.value }}))}
-                                                  rows={1}
-                                                   disabled={!isEditing}
-                                                />
-                                              </div>
+                              dietType: value
+                            }
+                          }))}
+                      disabled={!isEditing}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select diet type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {dietTypeOptions.map((diet) => (
+                          <SelectItem key={diet} value={diet}>
+                            {diet}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-                                              <div>
-                <Label htmlFor="dislikedFoods">What food do you dislike the most?</Label>
-                <Textarea
-                  id="dislikedFoods"
-                  placeholder="Tell us about foods you prefer to avoid (optional)..."
-                  value={editedData.dietInfo.dislikedFoods}
-                  onChange={(e) => 
-                    setEditedData((prev) => 
-                      ({ ...prev, 
-                        dietInfo: { ...prev.dietInfo,
-                        dislikedFoods: e.target.value} }))}
-                  rows={2}
-                  disabled={!isEditing}
-                />
-              </div>
+                  <div>
+                    <Label htmlFor="likedFood">What food do you like the most? *</Label>
+                    <Textarea
+                      id="likedFood"
+                      placeholder="Tell us about your favorite foods, ingredients, or dishes..."
+                      value={isEditing ? editedData.dietInfo.likedFood : userData.dietInfo.likedFood}
+                      onChange={(e) =>
+                        setEditedData((prev) =>
+                        ({
+                          ...prev,
+                          dietInfo: {
+                            ...prev.dietInfo,
+                            likedFood: e.target.value
+                          }
+                        }))}
+                      rows={1}
+                      disabled={!isEditing}
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="dislikedFood">What food do you dislike the most?</Label>
+                    <Textarea
+                      id="dislikedFood"
+                      placeholder="Tell us about foods you prefer to avoid (optional)..."
+                      value={editedData.dietInfo.dislikedFood}
+                      onChange={(e) =>
+                        setEditedData((prev) =>
+                        ({
+                          ...prev,
+                          dietInfo: {
+                            ...prev.dietInfo,
+                            dislikedFood: e.target.value
+                          }
+                        }))}
+                      rows={2}
+                      disabled={!isEditing}
+                    />
+                  </div>
 
 
                   {/* <Badge 
@@ -518,8 +532,8 @@ const Profile = () => {
                             {userData.dietInfo.allergies.length > 0 ? userData.dietInfo.allergies.join(', ') : 'None'}
                           </Badge> */}
                 </div>
-                </div>
-              
+              </div>
+
             </CardContent>
           </Card>
         </TabsContent>
