@@ -84,11 +84,11 @@ const dietTypeOptions = [
 ]
 
 const activityLevels = [
-  { value: "sedentary", label: "Sedentary (little or no exercise)" },
-  { value: "light", label: "Lightly active (light exercise 1-3 days/week)" },
-  { value: "moderate", label: "Moderately active (moderate exercise 3-5 days/week)" },
-  { value: "very", label: "Very active (hard exercise 6-7 days/week)" },
-  { value: "extra", label: "Extra active (very hard exercise, physical job)" },
+  { value: "Sedentary (little or no exercise)", label: "Sedentary (little or no exercise)" },
+  { value: "Lightly active (light exercise 1-3 days/week)", label: "Lightly active (light exercise 1-3 days/week)" },
+  { value: "Moderately active (moderate exercise 3-5 days/week)", label: "Moderately active (moderate exercise 3-5 days/week)" },
+  { value: "Very active (hard exercise 6-7 days/week)", label: "Very active (hard exercise 6-7 days/week)" },
+  { value: "Extra active (very hard exercise, physical job)", label: "Extra active (very hard exercise, physical job)" },
 ]
 
 const UpdateProfileForm = () => {
