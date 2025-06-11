@@ -1,4 +1,4 @@
-import { ArrowLeft, Calendar, Camera, ChefHat, Mail, MapPin, Phone, Users } from 'lucide-react'
+import { AlertCircle, ArrowLeft, Calendar, Camera, ChefHat, Mail, MapPin, Phone, Users } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { Button } from './ui/button'
 import { Link } from 'react-router'
@@ -15,6 +15,8 @@ import { log } from 'console'
 import { toast } from 'react-toastify'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
 import { Checkbox } from './ui/checkbox'
+import { Alert, AlertDescription } from './ui/alert'
+import { set } from 'date-fns'
 
 type UserData = {
   name: string
@@ -83,6 +85,8 @@ const Profile = () => {
   const navigate = useNavigate();
   const email = location.state?.email;
   const [isEditing, setIsEditing] = useState(false)
+  const [error, setError] = useState("")
+
 
   const [userData, setUserData] = useState<UserData>({
     name: '',
@@ -144,6 +148,12 @@ const Profile = () => {
   }, [userData, isEditing]);
 
   const handleSaveProfile = () => {
+    if(validateStep2() === false) {
+      return;
+    }
+    else
+    {
+    setError("");
     console.log(JSON.stringify(editedData))
     const response = axios
       .put(`http://localhost:8080/update/${email}`, editedData)
@@ -158,6 +168,7 @@ const Profile = () => {
       });
     setIsEditing(false);
     fetchUserData();
+    }
   }
 
   const handleCancelEdit = () => {
@@ -195,6 +206,55 @@ const Profile = () => {
       },
     }))
   }
+  const validateStep1 = () => {
+    if (
+      !editedData.name ||
+      !editedData.age ||
+      !editedData.gender ||
+      !editedData.height ||
+      !editedData.weight ||
+      !editedData.activityLevel
+    ) {
+      setError("Please fill in all personal information fields")
+      return false
+    }
+    if (editedData.age < 13 || editedData.age > 120) {
+      setError("Please enter a valid age between 13 and 120")
+      return false
+    }
+    if (editedData.height < 100 || editedData.height > 250) {
+      setError("Please enter a valid height between 100-250 cm")
+      return false
+    }
+    if (editedData.weight < 30 || editedData.weight > 300) {
+      setError("Please enter a valid weight between 30-300 kg")
+      return false
+    }
+    return true
+  }
+
+  const validateStep2 = () => {
+    if (editedData.dietInfo.cuisines.length === 0) {
+      setError("Please select at least one favorite cuisine")
+      return false
+    }
+    if (editedData.dietInfo.allergies.length === 0) {
+      setError("Please select your allergies or 'None' if you have no allergies")
+      return false
+    }
+    if (!editedData.dietInfo.goal || !editedData.dietInfo.dietType) {
+      setError("Please select your goal and diet type")
+      return false
+    }
+    return true
+  }
+
+  const handleNext = () => {
+    setError("")
+    return validateStep2();                                                                                                                                          
+  }
+
+
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -407,7 +467,15 @@ const Profile = () => {
               </div>
             </CardHeader>
             <CardContent className="space-y-6">
+
               <div>
+
+                {error && (
+                  <Alert variant="destructive" className="mb-6">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
 
 
                 <div className="flex flex-col space-y-6">
@@ -487,7 +555,7 @@ const Profile = () => {
                   </div>
 
                   <div>
-                    <Label htmlFor="likedFood">What food do you like the most? *</Label>
+                    <Label htmlFor="likedFood">What food do you like the most?</Label>
                     <Textarea
                       id="likedFood"
                       placeholder="Tell us about your favorite foods, ingredients, or dishes..."
@@ -544,3 +612,7 @@ const Profile = () => {
 }
 
 export default Profile
+function setError(arg0: string) {
+  throw new Error('Function not implemented.')
+}
+

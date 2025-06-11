@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { ChefHat, ArrowLeft, Mail, Lock, User, Eye, EyeOff, AlertCircle } from "lucide-react"
+import { log } from "console";
 
 
 type LoginData = {
@@ -69,7 +70,8 @@ function AuthForm() {
         console.log("User logged in successfully:", response.data);
         toast.success("Login successful");
         setSuccess("Login successful");
-        navigate('/profile', { state: { email: loginData.email } });
+        localStorage.setItem('email', JSON.stringify(loginData.email));
+        navigate('/preferences', { state: { email: loginData.email } });
       } else if (response.status === 401) {
         setError("Invalid email or password");
         toast.error("Invalid email or password");
@@ -118,7 +120,8 @@ function AuthForm() {
         if (response.status === 201) {
           console.log("User signed up successfully:", response.data);
         setSuccess("Sign Up  successful");
-         navigate('/update', { state: signupData });
+        localStorage.setItem('data', JSON.stringify(signupData));
+        navigate('/update', { state: signupData });
         } else {
           toast(response.data);
         }

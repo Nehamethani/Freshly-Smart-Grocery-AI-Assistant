@@ -256,7 +256,6 @@ const UpdateProfileForm = () => {
       .catch((error) => {
         console.error("Error:", error);
       });
-      localStorage.setItem("freshlyProfileData", JSON.stringify(profileData))
       setSuccess("Profile updated successfully! Redirecting to your user dashboard...")
 
        navigate('/profile', { state: { email: email } });

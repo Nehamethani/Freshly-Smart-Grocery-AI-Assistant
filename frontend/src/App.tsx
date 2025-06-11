@@ -16,6 +16,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import HomePage from "./pages/HomePage";
 import Profile from "./components/Profile";
+import MealForm from "./components/MealForm";
 
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
       <Route path="/sign-in" element={<SignUp />} />
       <Route path="/update" element={<InputForm />} />
       <Route path="/profile" element={<Profile />} />
+      <Route path="/preferences" element={<MealForm/>}/>
     </Routes>
   );
 
