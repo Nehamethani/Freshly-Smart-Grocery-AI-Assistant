@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react'
+import { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
 import { Button } from './ui/button'
 import { ArrowLeft, ChefHat } from 'lucide-react'
@@ -10,10 +10,27 @@ import { Textarea } from './ui/textarea'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 
+interface DietInfo {
+  allergies: string[]
+  dietType: string[]
+  cuisines: string[]
+}
+
+interface APIResponse {
+  familySize?: string;
+  cookingTime?: string;
+  budget?: string;
+  cookingSkillLevel?: string;
+  mealTypes?: string[];
+  mealFrequency?: string;
+  dietInfo?: DietInfo;
+  preferredCuisines?: string[];
+}
+
 type FormData = {
   allergies: string[]
   budget: string
-  cookingTime: string 
+  cookingTime: string
   familySize: string
   dietaryRestrictions: string[]
   mealPreferences: string[]
@@ -24,20 +41,10 @@ type FormData = {
 }
 
 const MealForm = () => {
- const [items, setItem] = useState([]);
- const [error, setError] = useState<string | null>(null);
-
- const navigate = useNavigate();
-  useEffect(() => {
-    const userEmail = localStorage.getItem('email');
-    if (!userEmail) {
-      // Redirect to login or signup
-      navigate('/sign-in');
-    }
-  }, [navigate]);
-    
-
-
+  const rawEmail = localStorage.getItem('email');
+  const userEmail = rawEmail ? rawEmail.replace(/"/g, '') : '';
+  const [items, setItem] = useState([]);
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState<FormData>({
     familySize: '',
     cookingTime: '',
@@ -49,8 +56,54 @@ const MealForm = () => {
     mealTypes: [],
     preferredCuisines: [],
     mealFrequency: ''
-  })
-   const fetchUserData = async () => {
+  });
+
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!userEmail) {
+        navigate('/sign-in');
+        return;
+      }
+
+      try {
+        console.log('Fetching user data for email:', userEmail);
+        const response = await axios.get<APIResponse>(`http://localhost:8080/email/${userEmail}`);
+        const data = response.data;
+
+        setFormData((prev) => ({
+          ...prev,
+          familySize: data.familySize || '',
+          cookingTime: data.cookingTime || '',
+          budget: data.budget || '',
+          cookingSkillLevel: data.cookingSkillLevel || '',
+          mealTypes: data.mealTypes || [],
+          mealFrequency: data.mealFrequency || '',
+          allergies: data.dietInfo?.allergies || [],
+          mealPreferences: data.dietInfo?.cuisines || [],
+          preferredCuisines: data.dietInfo?.cuisines || []
+        }));
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        setError('Failed to fetch user data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [userEmail, navigate]);
+
+  // Optional: Log when formData updates
+  useEffect(() => {
+    console.log('Updated formData:', formData);
+  }, [formData]);
+
+  const fetchUserData = async () => {
     axios.get(`http://localhost:8080/email/${email}`)
       .then((response) => {
         const fetchedUserData = response.data;
@@ -76,6 +129,21 @@ const MealForm = () => {
     });
   }
 
+  const handleMealTypeChange = (mealType: string, checked: boolean) => {
+    if (checked) {
+      setFormData((prev) => ({
+        ...prev,
+        mealTypes: [...prev.mealTypes, mealType],
+      }))
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        mealTypes: prev.mealTypes.filter((m) => m !== mealType),
+      }))
+    }
+  }
+
+
   return (
     <div className="max-w-4xl mx-auto">
       {/* Header */}
@@ -99,7 +167,7 @@ const MealForm = () => {
         </div>
       </div>
 
-      (error && ())
+
 
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold mb-4">Tell Us About Your Preferences</h2>
@@ -107,13 +175,13 @@ const MealForm = () => {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <Card>
             <CardHeader>
               <CardTitle>Basic Information</CardTitle>
             </CardHeader>
-                <CardContent className="space-y-4">
-                <div>
+            <CardContent className="space-y-4">
+              <div>
                 <Label htmlFor="familySize">Family Size</Label>
                 <Select
                   value={formData.familySize}
@@ -131,7 +199,7 @@ const MealForm = () => {
                 </Select>
               </div>
 
-                <div>
+              <div>
                 <Label htmlFor="cookingTime">Available Cooking Time</Label>
                 <Select
                   value={formData.cookingTime}
@@ -148,32 +216,66 @@ const MealForm = () => {
                   </SelectContent>
                 </Select>
               </div>
-                </CardContent>
+            </CardContent>
           </Card>
+         
+
+
           <Card>
-            <CardHeader>
-              <CardTitle>Dietary Preferences</CardTitle>
-            </CardHeader>
-              <CardContent className="space-y-4">
-              <div>
-                <Label className="text-base font-medium">Dietary Restrictions</Label>
-                <div className="grid grid-cols-2 gap-2 mt-2">
-                  {["Vegetarian", "Vegan", "Gluten-Free", "Keto", "Paleo", "Low-Carb"].map((restriction) => (
-                    <div key={restriction} className="flex items-center space-x-2">
+          <CardHeader>
+            <CardTitle>Meal Preferences</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+         
+             <div>
+                <Label className="text-base font-medium">Which meals do you want suggestions for?</Label>
+                <div className="grid grid-cols-3 md:grid-cols-4 gap-2 mt-2">
+                  {["Breakfast", "Lunch", "Dinner", "Snacks"].map((mealType) => (
+                    <div key={mealType} className="flex items-center space-x-2">
                       <Checkbox
-                        id={restriction}
-                        checked={formData.dietaryRestrictions.includes(restriction)}
-                        onCheckedChange={(checked) => handleDietaryChange(restriction, checked as boolean)}
+                        id={mealType}
+                        checked={formData.mealTypes.includes(mealType)}
+                        onCheckedChange={(checked) => handleMealTypeChange(mealType, checked as boolean)}
                       />
-                      <Label htmlFor={restriction} className="text-sm">
-                        {restriction}
+                      <Label htmlFor={mealType} className="text-sm">
+                        {mealType}
                       </Label>
                     </div>
                   ))}
                 </div>
               </div>
-            </CardContent>
-          </Card>
+
+           
+
+            <div>
+              <Label className="text-base font-medium">Favorite Cuisines</Label>
+             <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
+                  {formData.preferredCuisines.map((cuisine) => (
+                    <div key={cuisine} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={cuisine}
+                        checked={formData.dietaryRestrictions.includes(cuisine)}
+                        onCheckedChange={(checked) => handleDietaryChange(cuisine, checked as boolean)}
+                      />
+                      <Label htmlFor={cuisine} className="text-sm">
+                        {cuisine}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+
+            </div>
+          </CardContent>
+        </Card>
+
+        
+
+        </div>
+
+         <div className="text-center">
+          <Button type="submit" size="lg" className="bg-green-600 hover:bg-green-700 px-12 py-4">
+            Get My Personalized Suggestions
+          </Button>
         </div>
       </form>
     </div>

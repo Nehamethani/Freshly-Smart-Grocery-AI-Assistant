@@ -70,7 +70,7 @@ function AuthForm() {
         console.log("User logged in successfully:", response.data);
         toast.success("Login successful");
         setSuccess("Login successful");
-        localStorage.setItem('email', JSON.stringify(loginData.email));
+        localStorage.setItem('email', loginData.email);
         navigate('/preferences', { state: { email: loginData.email } });
       } else if (response.status === 401) {
         setError("Invalid email or password");
