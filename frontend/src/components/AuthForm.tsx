@@ -71,7 +71,7 @@ function AuthForm() {
         toast.success("Login successful");
         setSuccess("Login successful");
         localStorage.setItem('email', loginData.email);
-        navigate('/preferences', { state: { email: loginData.email } });
+        navigate('/profile', { state: { email: loginData.email } });
       } else if (response.status === 401) {
         setError("Invalid email or password");
         toast.error("Invalid email or password");

@@ -83,7 +83,7 @@ const dietTypeOptions = [
 const Profile = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const email = location.state?.email;
+  const email = location.state?.email || localStorage.getItem('email') || '';
   const [isEditing, setIsEditing] = useState(false)
   const [error, setError] = useState("")
 
@@ -131,6 +131,7 @@ const Profile = () => {
         };
         setUserData(fetchedUserData);
         console.log('Fetched User Data:', fetchedUserData);
+        localStorage.setItem('freshlyUser', JSON.stringify(fetchedUserData));
       }).catch((error) => {
         console.error('Error fetching user data:', error);
       })

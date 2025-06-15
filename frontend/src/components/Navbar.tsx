@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router'
-import { ChefHat } from 'lucide-react'
+import { ChefHat, Users } from 'lucide-react'
 
 const Navbar = () => {
   return (
@@ -11,7 +11,7 @@ const Navbar = () => {
             <h1 className="text-2xl font-bold text-gray-900">Freshly</h1>
           </div>
           <nav className="hidden md:flex space-x-6">
-            <Link to="/" className='text-gray-900 hover:text-gray-700'>Home</Link>
+            <Link to="/" className='text-gray-600 hover:text-green-600'>Home</Link>
             <a href="#features" className="text-gray-600 hover:text-green-600">
               Features
             </a>
@@ -22,8 +22,22 @@ const Navbar = () => {
               Contact Us
             </a>
           
-             <Link to="/preferences" className='text-gray-900 hover:text-gray-700'>Meal Form</Link>
-            <Link to="/sign-in" className='text-gray-900 hover:text-gray-700'>Sign In</Link>
+             <Link to="/preferences" className='text-gray-600 hover:text-green-600'>Meal Form</Link>
+              <div className="flex items-center space-x-2 text-sm text-gray-600">
+              <Users className="h-4 w-4" />
+             {
+                localStorage.getItem("freshlyUser") ? (
+                  <span className='text-gray-600'>
+                    <Link to="/profile" className='text-gray-600 hover:text-green-600'>Welcome, {JSON.parse(localStorage.getItem("freshlyUser") || '{}').name}</Link>
+                  </span>
+                ) : (
+                  <Link to="/sign-in" className='text-gray-600 hover:text-green-600'>Sign In</Link>
+                )
+             }
+              </div>
+           
+            
+           
           </nav>
         </div>
       </header>

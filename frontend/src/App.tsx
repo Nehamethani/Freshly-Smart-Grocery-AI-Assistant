@@ -17,6 +17,7 @@ import { ToastContainer } from "react-toastify";
 import HomePage from "./pages/HomePage";
 import Profile from "./components/Profile";
 import MealForm from "./components/MealForm";
+import Suggestions from "./components/Suggestions";
 
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
       <Route path="/update" element={<InputForm />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/preferences" element={<MealForm/>}/>
+      <Route path="/suggestions" element={<Suggestions/>} />
     </Routes>
   );
 

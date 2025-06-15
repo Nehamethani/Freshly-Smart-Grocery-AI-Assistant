@@ -28,6 +28,14 @@ interface APIResponse {
 }
 
 type FormData = {
+  age?: string
+  height?: string
+  weight?: string
+  activityLevel?: string
+  likedFood?: string[]
+  dislikedFood?: string[]
+  goal?: string
+  gender?: string
   allergies: string[]
   budget: string
   cookingTime: string
@@ -55,7 +63,14 @@ const MealForm = () => {
     cookingSkillLevel: '',
     mealTypes: [],
     preferredCuisines: [],
-    mealFrequency: ''
+    mealFrequency: '',
+    age: '',
+    height: '',
+    weight: '',
+    activityLevel: '',
+    likedFood: [],
+    dislikedFood: [],
+    goal: ''
   });
 
   const [loading, setLoading] = useState(true);
@@ -72,19 +87,25 @@ const MealForm = () => {
 
       try {
         console.log('Fetching user data for email:', userEmail);
-        const response = await axios.get<APIResponse>(`http://localhost:8080/email/${userEmail}`);
+        const response = await axios.get(`http://localhost:8080/email/${userEmail}`);
         const data = response.data;
 
         setFormData((prev) => ({
           ...prev,
           familySize: data.familySize || '',
           cookingTime: data.cookingTime || '',
-          budget: data.budget || '',
           cookingSkillLevel: data.cookingSkillLevel || '',
           mealTypes: data.mealTypes || [],
           mealFrequency: data.mealFrequency || '',
           allergies: data.dietInfo?.allergies || [],
-          mealPreferences: data.dietInfo?.cuisines || [],
+          age: data.age || '',
+          height: data.height || '',
+          weight: data.weight || '',
+          activityLevel: data.activityLevel || '',
+          likedFood: data.dietInfo.likedFood || [],
+          dislikedFood: data.dietInfo.dislikedFood || [],
+          goal: data.dietInfo.goal || '',
+          gender: data.gender || '',
           preferredCuisines: data.dietInfo?.cuisines || []
         }));
       } catch (error) {
@@ -96,25 +117,21 @@ const MealForm = () => {
     };
 
     fetchUserData();
-  }, [userEmail, navigate]);
+  }, [userEmail]);
 
   // Optional: Log when formData updates
   useEffect(() => {
     console.log('Updated formData:', formData);
   }, [formData]);
 
-  const fetchUserData = async () => {
-    axios.get(`http://localhost:8080/email/${email}`)
-      .then((response) => {
-        const fetchedUserData = response.data;
-        console.log('Fetched User Data:', fetchedUserData);
-      }).catch((error) => {
-        console.error('Error fetching user data:', error);
-      })
-  }
+ 
   const email = localStorage.getItem('email') || '';
 
   const handleSubmit = (e: React.FormEvent) => {
+    console.log('Form submitted with data:', formData);
+    e.preventDefault();
+    localStorage.setItem("freshlyPreferences", JSON.stringify(formData))
+    navigate("/suggestions")
   }
 
   function handleDietaryChange(restriction: string, checked: boolean): void {
@@ -159,7 +176,7 @@ const MealForm = () => {
           <h1 className="text-2xl font-bold">Freshly</h1>
         </div>
         <div className="ml-auto">
-          <Link to="/">
+          <Link to="/profile">
             <Button variant="outline" size="sm">
               Profile
             </Button>
