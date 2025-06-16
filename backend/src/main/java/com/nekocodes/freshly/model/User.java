@@ -26,7 +26,6 @@ public class User {
     private double weight;
     private String activityLevel;
 
-    //dietInfo class
-    @Builder.Default
-    private DietInfo dietInfo = new DietInfo();
+  // dietInfo class
+  @Builder.Default private DietInfo dietInfo = new DietInfo();
 }
