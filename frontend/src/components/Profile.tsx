@@ -1,4 +1,4 @@
-import { AlertCircle, ArrowLeft, Calendar, Camera, ChefHat, Mail, MapPin, Phone, Users } from 'lucide-react'
+import { AlertCircle, ArrowLeft, Calendar, Camera, ChefHat, Mail, MapPin, Phone, Settings, Shield, Users } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { Button } from './ui/button'
 import { Link } from 'react-router'
@@ -255,23 +255,40 @@ const Profile = () => {
     return validateStep2();                                                                                                                                          
   }
 
+  const handleLogOut = () => {
+    localStorage.removeItem('email');
+    localStorage.removeItem('freshlyUser');
+    navigate('/');
+    toast.success("Logged out successfully");
+  }
+
 
 
   return (
     <div className="max-w-6xl mx-auto">
       {/* Header */}
-      <div className="flex items-center mb-8">
-        <Link to="/">
-          <Button variant="ghost" size="sm" className="mr-4">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Home
-          </Button>
-        </Link>
-        <div className="flex items-center space-x-2">
-          <ChefHat className="h-6 w-6 text-green-600" />
-          <h1 className="text-2xl font-bold">Freshly</h1>
-        </div>
-      </div>
+        <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center">
+                <Link to="/preferences">
+                  <Button variant="ghost" size="sm" className="mr-4">
+                    <ArrowLeft className="h-4 w-4 mr-2" />
+                    Back
+                  </Button>
+                </Link>
+                <div className="flex items-center space-x-2">
+                  <ChefHat className="h-6 w-6 text-green-600" />
+                  <h1 className="text-2xl font-bold">Freshly</h1>
+                </div>
+              </div>
+              <div className="flex items-center space-x-4">
+
+                <Link to="/preferences">
+                  <Button variant="outline" size="sm">
+                    Meal Form
+                  </Button>
+                </Link>
+              </div>
+            </div>
 
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold mb-4">My Profile</h2>
@@ -442,8 +459,13 @@ const Profile = () => {
               </div>
 
             </CardContent>
-
+                    
           </Card>
+           <div className="pt-4 space-y-2">
+                  <Button variant="outline"  onClick= {handleLogOut} className="w-full">
+                    Log Out
+                  </Button>
+                </div>  
         </TabsContent>
 
         <TabsContent value="diet-info" className="space-y-6">
@@ -606,7 +628,84 @@ const Profile = () => {
             </CardContent>
           </Card>
         </TabsContent>
+
+           <TabsContent value="account" className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Security Settings */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Shield className="h-5 w-5" />
+                  <span>Security</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="currentPassword">Current Password</Label>
+                  <Input id="currentPassword" type="password" placeholder="Enter current password" />
+                </div>
+                <div>
+                  <Label htmlFor="newPassword">New Password</Label>
+                  <Input id="newPassword" type="password" placeholder="Enter new password" />
+                </div>
+                <div>
+                  <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                  <Input id="confirmPassword" type="password" placeholder="Confirm new password" />
+                </div>
+                <Button className="w-full bg-green-600 hover:bg-green-700">Update Password</Button>
+              </CardContent>
+            </Card>
+
+            {/* Account Settings */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Settings className="h-5 w-5" />
+                  <span>Account Settings</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="language">Language</Label>
+                  <Select defaultValue="en">
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select language" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="en">English</SelectItem>
+                      <SelectItem value="es">Spanish</SelectItem>
+                      <SelectItem value="fr">French</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="timezone">Timezone</Label>
+                  <Select defaultValue="pst">
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select timezone" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pst">Pacific Standard Time</SelectItem>
+                      <SelectItem value="est">Eastern Standard Time</SelectItem>
+                      <SelectItem value="cst">Central Standard Time</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="pt-4 space-y-2">
+                  <Button variant="outline" className="w-full">
+                    Export My Data
+                  </Button>
+                  <Button variant="destructive" className="w-full">
+                    Delete Account
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+          </TabsContent>
       </Tabs>
+
+
 
     </div>
   )

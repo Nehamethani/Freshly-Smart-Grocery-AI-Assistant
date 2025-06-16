@@ -95,7 +95,7 @@ const activityLevels = [
 const UpdateProfileForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const email = location.state?.email;
+  const email = location.state?.email || localStorage.getItem("email") || "";
   const firstName = location.state?.firstName;
   const lastName = location.state?.lastName;
   const userName = firstName && lastName ? `${firstName} ${lastName}` : email || "User";
@@ -249,7 +249,7 @@ const UpdateProfileForm = () => {
     }
 
     const response = axios
-      .put(`http://localhost:8080/update/${email}`, profileData)
+      .put(`http://localhost:8080/update/${email}`, JSON.stringify(profileData))
       .then((response) => {
         console.log("Response:", response.data);
       })
