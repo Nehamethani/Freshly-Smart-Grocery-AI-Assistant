@@ -30,8 +30,7 @@ public class UserController {
   }
 
   @GetMapping("/user/{email}")
-  public ResponseEntity<User> getUserEmail(@PathVariable String email)
-      throws UserNotFoundException {
+  public ResponseEntity<User> getUserEmail(@PathVariable String email) {
     log.info("Searching user with email id: {}", email);
     User user = service.getUserByEmail(email);
     if (user == null) {
@@ -48,8 +47,7 @@ public class UserController {
 
   @PutMapping("/update/{email}")
   public ResponseEntity<?> updateUserDetails(
-      @PathVariable String email, @RequestBody User updatedUserRequest)
-      throws UserNotFoundException {
+      @PathVariable String email, @RequestBody User updatedUserRequest) {
     User user = service.getUserByEmail(email);
     if (user == null) {
       log.error("User does not exist");
