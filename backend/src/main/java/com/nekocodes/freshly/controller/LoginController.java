@@ -43,7 +43,7 @@ public class LoginController {
       }
     } catch (UsernameNotFoundException e) {
       log.warn("Username Not found: {}", authRequest.getUsername());
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User does not exists.");
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User does not exists.");
     } catch (BadCredentialsException e) {
       log.error("BadCredential error: {}", e.getMessage(), e);
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Bad Credentials.");
