@@ -120,7 +120,7 @@ function AuthForm() {
         if (response.status === 201) {
           console.log("User signed up successfully:", response.data);
         setSuccess("Sign Up  successful");
-        localStorage.setItem('data', JSON.stringify(signupData));
+        localStorage.setItem('email', signupData.email);
         navigate('/update', { state: signupData });
         } else {
           toast(response.data);
