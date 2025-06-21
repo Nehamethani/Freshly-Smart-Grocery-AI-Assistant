@@ -16,6 +16,7 @@ import axios from "axios"
 
 type ProfileData = {
   // Personal Information
+  
   name: string
   age: string
   gender: string
@@ -28,8 +29,8 @@ type ProfileData = {
     allergies: string[]
     goal: string
     dietType: string
-    likedFoods: string
-    dislikedFoods: string
+    likedFood: string
+    dislikedFood: string
   }
 }
 
@@ -84,17 +85,17 @@ const dietTypeOptions = [
 ]
 
 const activityLevels = [
-  { value: "sedentary", label: "Sedentary (little or no exercise)" },
-  { value: "light", label: "Lightly active (light exercise 1-3 days/week)" },
-  { value: "moderate", label: "Moderately active (moderate exercise 3-5 days/week)" },
-  { value: "very", label: "Very active (hard exercise 6-7 days/week)" },
-  { value: "extra", label: "Extra active (very hard exercise, physical job)" },
+  { value: "Sedentary (little or no exercise)", label: "Sedentary (little or no exercise)" },
+  { value: "Lightly active (light exercise 1-3 days/week)", label: "Lightly active (light exercise 1-3 days/week)" },
+  { value: "Moderately active (moderate exercise 3-5 days/week)", label: "Moderately active (moderate exercise 3-5 days/week)" },
+  { value: "Very active (hard exercise 6-7 days/week)", label: "Very active (hard exercise 6-7 days/week)" },
+  { value: "Extra active (very hard exercise, physical job)", label: "Extra active (very hard exercise, physical job)" },
 ]
 
 const UpdateProfileForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const email = location.state?.email;
+  const email = location.state?.email || localStorage.getItem("email") || "";
   const firstName = location.state?.firstName;
   const lastName = location.state?.lastName;
   const userName = firstName && lastName ? `${firstName} ${lastName}` : email || "User";
@@ -107,8 +108,8 @@ const UpdateProfileForm = () => {
     allergies: [],
     goal: "",
     dietType: "",
-    likedFoods: "",
-    dislikedFoods: "",
+    likedFood: "",
+    dislikedFood: "",
   })
 
   const [profileData, setProfileData] = useState<ProfileData>({
@@ -124,8 +125,8 @@ const UpdateProfileForm = () => {
       allergies: [],
       goal: "",
       dietType: "",
-      likedFoods: "",
-      dislikedFoods: "",
+      likedFood: "",
+      dislikedFood: "",
     },
   })
 
@@ -242,23 +243,22 @@ const UpdateProfileForm = () => {
     console.log("New user" + JSON.stringify(profileData))
     setError("");
 
-    if (!profileData.dietInfo.likedFoods.trim()) {
+    if (!profileData.dietInfo.likedFood.trim()) {
       setError("Please tell us what foods you like")
       return
     }
 
     const response = axios
-      .put(`http://localhost:8080/update/${email}`, profileData)
+      .put(`http://localhost:8080/update/${email}`, JSON.stringify(profileData))
       .then((response) => {
         console.log("Response:", response.data);
       })
       .catch((error) => {
         console.error("Error:", error);
       });
-      localStorage.setItem("freshlyProfileData", JSON.stringify(profileData))
       setSuccess("Profile updated successfully! Redirecting to your user dashboard...")
 
-       navigate('/profile', { state: profileData });
+       navigate('/profile', { state: { email: email } });
   };
 
 
@@ -559,31 +559,31 @@ const UpdateProfileForm = () => {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <Label htmlFor="likedFoods">What food do you like the most? *</Label>
+                <Label htmlFor="likedFood">What food do you like the most? *</Label>
                 <Textarea
-                  id="likedFoods"
+                  id="likedFood"
                   placeholder="Tell us about your favorite foods, ingredients, or dishes..."
-                  value={profileData.dietInfo.likedFoods}
+                  value={profileData.dietInfo.likedFood}
                   onChange={(e) => 
                     setProfileData((prev) => 
                       ({ ...prev, 
                         dietInfo: { ...prev.dietInfo,
-                        likedFoods: e.target.value }}))}
+                        likedFood: e.target.value }}))}
                   rows={4}
                 />
               </div>
 
               <div>
-                <Label htmlFor="dislikedFoods">What food do you dislike the most?</Label>
+                <Label htmlFor="dislikedFood">What food do you dislike the most?</Label>
                 <Textarea
-                  id="dislikedFoods"
+                  id="dislikedFood"
                   placeholder="Tell us about foods you prefer to avoid (optional)..."
-                  value={profileData.dietInfo.dislikedFoods}
+                  value={profileData.dietInfo.dislikedFood}
                   onChange={(e) => 
                     setProfileData((prev) => 
                       ({ ...prev, 
                         dietInfo: { ...prev.dietInfo,
-                        dislikedFoods: e.target.value} }))}
+                        dislikedFood: e.target.value} }))}
                   rows={4}
                 />
               </div>

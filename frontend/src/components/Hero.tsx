@@ -1,6 +1,7 @@
 import React from 'react'
 import { ChefHat, Sparkles, Users, Clock } from "lucide-react";
 import { Link } from 'react-router';
+import { Button } from './ui/button';
 
 const Hero = () => {
   return (
@@ -171,9 +172,9 @@ const Hero = () => {
                 ></textarea>
               </div>
 
-              <button type="submit" className="w-full bg-green-600 hover:bg-green-700">
+              <Button type="submit" className="w-full bg-green-600 hover:bg-green-700">
                 Send Message
-              </button>
+              </Button>
             </form>
 
             <div className="mt-8 pt-8 border-t border-gray-200">
