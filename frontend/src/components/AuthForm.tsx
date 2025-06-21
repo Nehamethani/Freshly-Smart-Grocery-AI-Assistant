@@ -1,46 +1,53 @@
-import  { useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { ChefHat, ArrowLeft, Mail, Lock, User, Eye, EyeOff, AlertCircle } from "lucide-react"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  ChefHat,
+  ArrowLeft,
+  Mail,
+  Lock,
+  User,
+  Eye,
+  EyeOff,
+  AlertCircle,
+} from "lucide-react";
 import { log } from "console";
 
-
 type LoginData = {
-  email: string
-  password: string
-  rememberMe: boolean
-}
+  username: string;
+  password: string;
+  rememberMe: boolean;
+};
 
 type SignupData = {
-  firstName: string
-  lastName: string
-  email: string
-  password: string
-  confirmPassword: string
-  agreeToTerms: boolean
-}
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  agreeToTerms: boolean;
+};
 
 function AuthForm() {
-
   const navigate = useNavigate();
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [error, setError] = useState("")
-  const [success, setSuccess] = useState("")
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const [loginData, setLoginData] = useState<LoginData>({
-    email: "",
+    username: "",
     password: "",
     rememberMe: false,
-  })
+  });
 
   const [signupData, setSignupData] = useState<SignupData>({
     firstName: "",
@@ -49,29 +56,34 @@ function AuthForm() {
     password: "",
     confirmPassword: "",
     agreeToTerms: false,
-  })
+  });
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError("")
-    setSuccess("")
+    e.preventDefault();
+    setError("");
+    setSuccess("");
 
-
-    if (!loginData.email || !loginData.password) {
-      setError("Please fill in all fields")
-      return
+    if (!loginData.username || !loginData.password) {
+      setError("Please fill in all fields");
+      return;
     }
 
     // Simulate login (in real app, this would be an API call)
     try {
       console.log("Logging in with:", loginData);
-      const response = await axios.post("http://localhost:8080/login", loginData);
+      console.log("API URL:", "/api/login");
+
+      const response = await axios.post("/api/auth/authenticate", loginData);
+
+      console.log("Response:", response.status, response.data);
+
       if (response.status === 200) {
         console.log("User logged in successfully:", response.data);
         toast.success("Login successful");
         setSuccess("Login successful");
-        localStorage.setItem('email', loginData.email);
-        navigate('/profile', { state: { email: loginData.email } });
+        localStorage.setItem("email", loginData.username);
+        localStorage.setItem("token", response.data);
+        navigate("/profile", { state: { email: loginData.username } });
       } else if (response.status === 401) {
         setError("Invalid email or password");
         toast.error("Invalid email or password");
@@ -85,58 +97,58 @@ function AuthForm() {
         toast.error(error.response?.data || "An error occurred during login");
       }
     }
-  }
+  };
 
   const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError("")
-    setSuccess("")
+    e.preventDefault();
+    setError("");
+    setSuccess("");
 
     // Validation
-    if (!signupData.firstName || !signupData.lastName || !signupData.email || !signupData.password) {
-      setError("Please fill in all fields")
-      return
+    if (
+      !signupData.firstName ||
+      !signupData.lastName ||
+      !signupData.email ||
+      !signupData.password
+    ) {
+      setError("Please fill in all fields");
+      return;
     }
 
     if (signupData.password !== signupData.confirmPassword) {
-      setError("Passwords do not match")
-      return
+      setError("Passwords do not match");
+      return;
     }
 
     if (signupData.password.length < 6) {
-      setError("Password must be at least 6 characters long")
-      return
+      setError("Password must be at least 6 characters long");
+      return;
     }
 
     if (!signupData.agreeToTerms) {
-      setError("Please agree to the terms and conditions")
-      return
+      setError("Please agree to the terms and conditions");
+      return;
     }
 
-     try {
-        console.log("Signing up with:", signupData);
-        const response = await axios.post("http://localhost:8080/signup", signupData);
-        console.log("Response:", response);
-        if (response.status === 201) {
-          console.log("User signed up successfully:", response.data);
+    try {
+      console.log("Signing up with:", signupData);
+      const response = await axios.post("/api/signup", signupData);
+      console.log("Response:", response);
+      if (response.status === 201) {
+        console.log("User signed up successfully:", response.data);
         setSuccess("Sign Up  successful");
-        localStorage.setItem('email', signupData.email);
-        navigate('/update', { state: signupData });
-        } else {
-          toast(response.data);
-        }
-      } catch (error) {
-        console.error("Error during sign-up:", error);
-        if (axios.isAxiosError(error)) {
-          toast.error(
-            error.response?.data || "An error occurred during sign-up"
-          );
-          setError(
-            error.response?.data || "An error occurred during sign-up"    
-          );
-        }
-        
+        localStorage.setItem("email", signupData.email);
+        navigate("/update", { state: signupData });
+      } else {
+        toast(response.data);
       }
+    } catch (error) {
+      console.error("Error during sign-up:", error);
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data || "An error occurred during sign-up");
+        setError(error.response?.data || "An error occurred during sign-up");
+      }
+    }
 
     // Reset form
     setSignupData({
@@ -146,22 +158,22 @@ function AuthForm() {
       password: "",
       confirmPassword: "",
       agreeToTerms: false,
-    })
-  }
-  
+    });
+  };
+
   // // const handleLogin = async (e: { preventDefault: () => void }) => {
   // //   e.preventDefault();
-    
+
   // // }
 
   // // const handleSignup = async (e: { preventDefault: () => void }) => {
   // //   e.preventDefault();
   // //   // Validate signup data
-     
+
   // //     console.log("calling navigate:", user);
   // //     navigate('/update', { state: user });
   //   }
-  
+
   return (
     <div className="max-w-md mx-auto">
       {/* Header */}
@@ -179,7 +191,9 @@ function AuthForm() {
           <ChefHat className="h-8 w-8 text-green-600" />
           <h1 className="text-3xl font-bold">Freshly</h1>
         </div>
-        <p className="text-gray-600">Welcome to your personalized meal planning experience</p>
+        <p className="text-gray-600">
+          Welcome to your personalized meal planning experience
+        </p>
       </div>
 
       <Card className="shadow-lg">
@@ -193,7 +207,9 @@ function AuthForm() {
           <TabsContent value="login">
             <CardHeader>
               <CardTitle className="text-center">Welcome Back</CardTitle>
-              <p className="text-center text-sm text-gray-600">Sign in to your Freshly account</p>
+              <p className="text-center text-sm text-gray-600">
+                Sign in to your Freshly account
+              </p>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleLogin} className="space-y-4">
@@ -207,7 +223,9 @@ function AuthForm() {
                 {success && (
                   <Alert className="border-green-200 bg-green-50">
                     <AlertCircle className="h-4 w-4 text-green-600" />
-                    <AlertDescription className="text-green-800">{success}</AlertDescription>
+                    <AlertDescription className="text-green-800">
+                      {success}
+                    </AlertDescription>
                   </Alert>
                 )}
 
@@ -220,8 +238,13 @@ function AuthForm() {
                       type="email"
                       placeholder="Enter your email"
                       className="pl-10"
-                      value={loginData.email}
-                      onChange={(e: { target: { value: any; }; }) => setLoginData((prev) => ({ ...prev, email: e.target.value }))}
+                      value={loginData.username}
+                      onChange={(e: { target: { value: any } }) =>
+                        setLoginData((prev) => ({
+                          ...prev,
+                          username: e.target.value,
+                        }))
+                      }
                     />
                   </div>
                 </div>
@@ -236,7 +259,12 @@ function AuthForm() {
                       placeholder="Enter your password"
                       className="pl-10 pr-10"
                       value={loginData.password}
-                      onChange={(e: { target: { value: any; }; }) => setLoginData((prev) => ({ ...prev, password: e.target.value }))}
+                      onChange={(e: { target: { value: any } }) =>
+                        setLoginData((prev) => ({
+                          ...prev,
+                          password: e.target.value,
+                        }))
+                      }
                     />
                     <Button
                       type="button"
@@ -260,7 +288,10 @@ function AuthForm() {
                       id="rememberMe"
                       checked={loginData.rememberMe}
                       onCheckedChange={(checked: boolean) =>
-                        setLoginData((prev) => ({ ...prev, rememberMe: checked as boolean }))
+                        setLoginData((prev) => ({
+                          ...prev,
+                          rememberMe: checked as boolean,
+                        }))
                       }
                     />
                     <Label htmlFor="rememberMe" className="text-sm">
@@ -272,11 +303,12 @@ function AuthForm() {
                   </Button>
                 </div>
 
-                <Button type="submit" className="w-full bg-green-600 hover:bg-green-700">
+                <Button
+                  type="submit"
+                  className="w-full bg-green-600 hover:bg-green-700"
+                >
                   Sign In
                 </Button>
-
-               
               </form>
             </CardContent>
           </TabsContent>
@@ -285,7 +317,9 @@ function AuthForm() {
           <TabsContent value="signup">
             <CardHeader>
               <CardTitle className="text-center">Create Account</CardTitle>
-              <p className="text-center text-sm text-gray-600">Join Freshly and start your healthy eating journey</p>
+              <p className="text-center text-sm text-gray-600">
+                Join Freshly and start your healthy eating journey
+              </p>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSignup} className="space-y-4">
@@ -299,7 +333,9 @@ function AuthForm() {
                 {success && (
                   <Alert className="border-green-200 bg-green-50">
                     <AlertCircle className="h-4 w-4 text-green-600" />
-                    <AlertDescription className="text-green-800">{success}</AlertDescription>
+                    <AlertDescription className="text-green-800">
+                      {success}
+                    </AlertDescription>
                   </Alert>
                 )}
 
@@ -313,7 +349,12 @@ function AuthForm() {
                         placeholder="First name"
                         className="pl-10"
                         value={signupData.firstName}
-                        onChange={(e: { target: { value: any; }; }) => setSignupData((prev) => ({ ...prev, firstName: e.target.value }))}
+                        onChange={(e: { target: { value: any } }) =>
+                          setSignupData((prev) => ({
+                            ...prev,
+                            firstName: e.target.value,
+                          }))
+                        }
                       />
                     </div>
                   </div>
@@ -326,7 +367,12 @@ function AuthForm() {
                         placeholder="Last name"
                         className="pl-10"
                         value={signupData.lastName}
-                        onChange={(e: { target: { value: any; }; }) => setSignupData((prev) => ({ ...prev, lastName: e.target.value }))}
+                        onChange={(e: { target: { value: any } }) =>
+                          setSignupData((prev) => ({
+                            ...prev,
+                            lastName: e.target.value,
+                          }))
+                        }
                       />
                     </div>
                   </div>
@@ -342,7 +388,12 @@ function AuthForm() {
                       placeholder="Enter your email"
                       className="pl-10"
                       value={signupData.email}
-                      onChange={(e: { target: { value: any; }; }) => setSignupData((prev) => ({ ...prev, email: e.target.value }))}
+                      onChange={(e: { target: { value: any } }) =>
+                        setSignupData((prev) => ({
+                          ...prev,
+                          email: e.target.value,
+                        }))
+                      }
                     />
                   </div>
                 </div>
@@ -357,7 +408,12 @@ function AuthForm() {
                       placeholder="Create a password"
                       className="pl-10 pr-10"
                       value={signupData.password}
-                      onChange={(e: { target: { value: any; }; }) => setSignupData((prev) => ({ ...prev, password: e.target.value }))}
+                      onChange={(e: { target: { value: any } }) =>
+                        setSignupData((prev) => ({
+                          ...prev,
+                          password: e.target.value,
+                        }))
+                      }
                     />
                     <Button
                       type="button"
@@ -385,14 +441,21 @@ function AuthForm() {
                       placeholder="Confirm your password"
                       className="pl-10 pr-10"
                       value={signupData.confirmPassword}
-                      onChange={(e: { target: { value: any; }; }) => setSignupData((prev) => ({ ...prev, confirmPassword: e.target.value }))}
+                      onChange={(e: { target: { value: any } }) =>
+                        setSignupData((prev) => ({
+                          ...prev,
+                          confirmPassword: e.target.value,
+                        }))
+                      }
                     />
                     <Button
                       type="button"
                       variant="ghost"
                       size="sm"
                       className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
                     >
                       {showConfirmPassword ? (
                         <EyeOff className="h-4 w-4 text-gray-400" />
@@ -408,7 +471,10 @@ function AuthForm() {
                     id="agreeToTerms"
                     checked={signupData.agreeToTerms}
                     onCheckedChange={(checked: boolean) =>
-                      setSignupData((prev) => ({ ...prev, agreeToTerms: checked as boolean }))
+                      setSignupData((prev) => ({
+                        ...prev,
+                        agreeToTerms: checked as boolean,
+                      }))
                     }
                   />
                   <Label htmlFor="agreeToTerms" className="text-sm">
@@ -423,7 +489,10 @@ function AuthForm() {
                   </Label>
                 </div>
 
-                <Button type="submit" className="w-full bg-green-600 hover:bg-green-700">
+                <Button
+                  type="submit"
+                  className="w-full bg-green-600 hover:bg-green-700"
+                >
                   Create Account
                 </Button>
               </form>
@@ -431,11 +500,7 @@ function AuthForm() {
           </TabsContent>
         </Tabs>
       </Card>
-
-      
-      
     </div>
-    
   );
 }
 
