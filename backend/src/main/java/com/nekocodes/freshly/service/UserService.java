@@ -5,15 +5,11 @@ import com.nekocodes.freshly.model.User;
 import com.nekocodes.freshly.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Objects;
-import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -32,7 +28,6 @@ public class UserService implements UserDetailsService {
 
   public boolean checkUserExists(String email) {
     User userFound = getUserByEmail(email);
-    //    return Objects.equals(userFound.getEmail(), email);
     return userFound != null;
   }
 
@@ -47,7 +42,6 @@ public class UserService implements UserDetailsService {
     System.out.println(userObj);
     System.out.println(password);
     if (userObj.getEmail() == null) return "Invalid Email Id provided";
-    //    else if (passwordEncoder.matches(password, userObj.getPassword())) {
     else if (passwordEncoder.matches(password, userObj.getPassword())) {
       return "Successfully Authenticated";
     } else return "Password provided is Invalid";
@@ -97,12 +91,4 @@ public class UserService implements UserDetailsService {
     if (user == null) throw new UsernameNotFoundException("User with email doesnt exists.");
     return new UserInfoDetails(user);
   }
-  //  public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-  ////    Optional<User> userDetail = Optional.ofNullable(getUserByEmail(email));
-  ////
-  ////    // Converting User to UserDetails
-  ////    return userDetail
-  ////        .map(UserInfoDetails::new)
-  ////        .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
-  //  }
 }

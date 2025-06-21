@@ -29,7 +29,7 @@ public class UserController {
     return ResponseEntity.status(HttpStatus.CREATED).body("User has been created successfully.");
   }
 
-  @GetMapping("/user/{email}")
+  @GetMapping("/email/{email}")
   public ResponseEntity<User> getUserEmail(@PathVariable String email) {
     log.info("Searching user with email id: {}", email);
     User user = service.getUserByEmail(email);
@@ -37,7 +37,7 @@ public class UserController {
       log.error("User does not exist");
       throw new UserNotFoundException("User with associated email does not exist.");
     }
-    return ResponseEntity.status(HttpStatus.FOUND).body(user);
+    return ResponseEntity.status(HttpStatus.OK).body(user);
   }
 
   @PostMapping("/login")
