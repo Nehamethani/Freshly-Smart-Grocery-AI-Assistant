@@ -75,8 +75,6 @@ function AuthForm() {
 
       const response = await axios.post("/api/auth/authenticate", loginData);
 
-      console.log("Response:", response.status, response.data);
-
       if (response.status === 200) {
         console.log("User logged in successfully:", response.data);
         toast.success("Login successful");

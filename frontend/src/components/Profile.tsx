@@ -104,6 +104,8 @@ const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState("");
 
+  const token = localStorage.getItem("token");
+
   const [userData, setUserData] = useState<UserData>({
     name: "",
     email: "",
@@ -125,7 +127,11 @@ const Profile = () => {
 
   const fetchUserData = async () => {
     axios
-      .get(`/api/email/${email}`)
+      .get(`/api/email/${email}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((response) => {
         const data = response.data;
         const fetchedUserData: UserData = {
@@ -157,6 +163,10 @@ const Profile = () => {
   };
   const [editedData, setEditedData] = useState<UserData>(userData);
   useEffect(() => {
+    if (!token) {
+      navigate("/sign-in");
+      return;
+    }
     fetchUserData();
   }, []);
 
@@ -167,13 +177,21 @@ const Profile = () => {
   }, [userData, isEditing]);
 
   const handleSaveProfile = () => {
+    console.log("clicked save");
+
     if (validateStep2() === false) {
+      console.log("validation2 failed");
+
       return;
     } else {
       setError("");
       console.log(JSON.stringify(editedData));
       const response = axios
-        .put(`/api/update/${email}`, editedData)
+        .put(`/api/update/${email}`, editedData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
         .then((response) => {
           console.log("Response:", response.data);
           console.log("edited-Data", editedData);
