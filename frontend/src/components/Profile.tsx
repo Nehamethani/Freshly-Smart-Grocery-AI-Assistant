@@ -39,9 +39,9 @@ import { set } from "date-fns";
 type UserData = {
   name: string;
   email: string;
-  age: number;
-  height: number;
-  weight: number;
+  age: string;
+  height: string;
+  weight: string;
   gender: string;
   activityLevel: string;
   profileImage: string;
@@ -103,13 +103,14 @@ const Profile = () => {
   const email = location.state?.email || localStorage.getItem("email") || "";
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState("");
+ const [currentTab, setCurrentTab] = useState("profile");
 
   const [userData, setUserData] = useState<UserData>({
     name: "",
     email: "",
-    age: 0,
-    height: 0,
-    weight: 0,
+    age: "",
+    height: "",
+    weight: "",
     gender: "",
     activityLevel: "",
     profileImage: "/placeholder.svg?height=120&width=120",
@@ -167,10 +168,14 @@ const Profile = () => {
   }, [userData, isEditing]);
 
   const handleSaveProfile = () => {
-    if (validateStep2() === false) {
-      return;
+
+    if(currentTab == "profile" && validateStep1() == false)
+    {
+        console.log("Error" ,error);
+    }
+    else if (currentTab == "diet-info" && validateStep2() == false) {
     } else {
-      setError("");
+      setError("")
       console.log(JSON.stringify(editedData));
       const response = axios
         .put(`/api/update/${email}`, editedData)
@@ -234,15 +239,17 @@ const Profile = () => {
       setError("Please fill in all personal information fields");
       return false;
     }
-    if (editedData.age < 13 || editedData.age > 120) {
+    if (Number.parseInt(editedData.age) < 13 || Number.parseInt(editedData.age) > 120) {
+    
       setError("Please enter a valid age between 13 and 120");
+      console.log()
       return false;
     }
-    if (editedData.height < 100 || editedData.height > 250) {
+    if (Number.parseInt(editedData.height)< 100 || Number.parseInt(editedData.height) > 250) {
       setError("Please enter a valid height between 100-250 cm");
       return false;
     }
-    if (editedData.weight < 30 || editedData.weight > 300) {
+    if (Number.parseInt(editedData.weight)< 30 || Number.parseInt(editedData.weight) > 300) {
       setError("Please enter a valid weight between 30-300 kg");
       return false;
     }
@@ -311,7 +318,9 @@ const Profile = () => {
         </p>
       </div>
 
-      <Tabs defaultValue="profile" className="space-y-8">
+      <Tabs defaultValue="profile"
+       onValueChange={(value) => setCurrentTab(value)}
+      className="space-y-8">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="profile">Profile & Preferences</TabsTrigger>
           <TabsTrigger value="diet-info">Diet Info</TabsTrigger>
@@ -319,10 +328,13 @@ const Profile = () => {
           <TabsTrigger value="account">Account</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="profile" className="space-y-6">
+        <TabsContent value="profile"
+        className="space-y-6">
           <Card>
+            
             <CardHeader>
               <div className="flex justify-between items-center">
+               
                 <CardTitle>Personal Information</CardTitle>
                 {!isEditing ? (
                   <Button onClick={() => handleEditing(true)} variant="outline">
@@ -343,8 +355,9 @@ const Profile = () => {
                 )}
               </div>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-6">            
               <div className="flex items-center space-x-6">
+                 
                 <div className="relative">
                   <Avatar className="h-24 w-24">
                     <AvatarImage
@@ -373,10 +386,18 @@ const Profile = () => {
                   </Badge>
                 </div>
               </div>
+              {error && (
+                  <Alert variant="destructive" className="mb-6">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
 
               {/* Personal Details */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                 
                 <div>
+                  
                   <Label htmlFor="name">Name</Label>
                   <Input
                     id="name"
@@ -466,7 +487,7 @@ const Profile = () => {
                       onChange={(e) =>
                         setEditedData((prev) => ({
                           ...prev,
-                          height: parseInt(e.target.value),
+                          height: e.target.value,
                         }))
                       }
                       disabled={!isEditing}
@@ -486,7 +507,7 @@ const Profile = () => {
                       onChange={(e) =>
                         setEditedData((prev) => ({
                           ...prev,
-                          age: parseInt(e.target.value),
+                          age: e.target.value,
                         }))
                       }
                       disabled={!isEditing}
@@ -503,7 +524,7 @@ const Profile = () => {
                       onChange={(e) =>
                         setEditedData((prev) => ({
                           ...prev,
-                          weight: parseInt(e.target.value),
+                          weight: e.target.value,
                         }))
                       }
                       disabled={!isEditing}

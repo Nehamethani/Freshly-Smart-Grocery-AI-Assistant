@@ -22,20 +22,21 @@ type GroceryItem = {
     name: string
     category: string
     suggested: boolean
-    ingredients: string[]
     mealType: string
     mealName: string // Optional, can be used to store the meal name if needed
 }
 
-type MealItem = {
-    id: number
-    name: string
-    type: string
-    cookTime: string
-    servings: string
-    ingredients: string[]
-    difficulty: string
+
+
+
+interface MealItem {
+  id: number | string;
+  name: string;
+  mealName: string;
+  mealType: string;
+  suggested: boolean;
 }
+
 
 const Suggestions = () => {
 
@@ -56,6 +57,7 @@ const Suggestions = () => {
     const [response, setResponse] = useState<SuggestionMap[]>([]);
     const [groceryList, setGroceryList] = useState<GroceryItem[]>([]);
     const [MealItem, setMealItem] = useState<MealItem[]>([]);
+    const mealIngredientsMap = new Map<string, string[]>();
 
     const prompt = `You are a meal suggestion system. 
     Based on the user's preferences,
@@ -81,7 +83,7 @@ const Suggestions = () => {
         const fetchSuggestions = async () => {
             try {
                 const apiUrl = 'https://api.openai.com/v1/responses';
-                const apiKey = '';
+                const apiKey = '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';
                 const headers = {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${apiKey}`,
@@ -101,6 +103,14 @@ const Suggestions = () => {
                 const parsedData = JSON.parse(cleaned);
                 console.log('Response Data:', parsedData.suggestions);
                 setResponse(parsedData.suggestions)
+
+
+
+                parsedData.suggestions.forEach((meal: { name: string; ingredients: string[]; }) => {
+                    mealIngredientsMap.set(meal.name, meal.ingredients);
+                });
+
+                console.log(mealIngredientsMap);
             } catch (error) {
                 console.error('Error fetching suggestions:', error);
             }
@@ -110,45 +120,47 @@ const Suggestions = () => {
         , [])
 
     const handleAddToList = (meal: SuggestionMap) => {
-
         console.log('Adding meal to grocery list:', meal);
-        // Check if the meal is already in the grocery list
-        const existingItem = groceryList.find(item => item.name === meal.name && item.mealType === meal.type);
+
+        // Check for duplicates
+        const existingItem = groceryList.find(
+            item => item.name === meal.name && item.mealType === meal.type
+        );
         if (existingItem) {
             console.log('Meal already exists in grocery list:', existingItem);
-            return; // Meal already exists, do not add again
+            return;
         }
-        setMealItem((prevItems) => [...prevItems, meal]);
-        // Create a new grocery item
-        const newItem = meal.ingredients.map((ingredient, index) => ({
-            id: index + 1,                  // Simple ID
-            name: ingredient,               // Ingredient name
-            category: meal.type,            // Category from meal type
-            suggested: true,                // Mark as suggested
-            ingredients: meal.ingredients,  // Full list of ingredients
-            mealType: meal.type,            // Meal type again
-            mealName: meal.name             // Reference to meal name
+
+        const ingredients = mealIngredientsMap.get(meal.name);
+        if (!ingredients) {
+            console.warn(`No ingredients found for meal: ${meal.name}`);
+            return;
+        }
+
+        // Transform ingredients into proper objects with meal context
+        const newItems = ingredients.map((ingredient, index) => ({
+            id: Date.now() + index, // or use uuid
+            name: ingredient,
+            mealName: meal.name,
+            mealType: meal.type,
+            suggested: true
         }));
 
-        setGroceryList((prevList) => [...prevList, ...newItem]);
-        console.log('Added to grocery list:', newItem);
-    }
+        // Add to meal item state
+        setMealItem(prevItems => [...prevItems, ...newItems]);
+    };
 
     const addToGroceryList = (item: GroceryItem) => {
-    if (!groceryList.find((g) => g.id === item.id)) {
-      setGroceryList([...groceryList, item])
+        if (!groceryList.find((g) => g.id === item.id)) {
+            setGroceryList([...groceryList, item])
+        }
     }
-  }
 
-   const removeFromGroceryList = (mealName: string) => {
-  setGroceryList((prevList) =>
-    prevList.filter((item) => item.mealName !== mealName)
-  );
-
-  setMealItem((prevItems) =>
-    prevItems.filter((item) => item.name !== mealName)
-  );
-};
+    const removeFromGroceryList = (mealName: string) => {
+        setGroceryList((prevList) =>
+            prevList.filter((item) => item.mealName !== mealName)
+        );
+    };
 
 
     return (
@@ -280,7 +292,7 @@ const Suggestions = () => {
                                     </p>
                                 ) : (
                                     <div className="space-y-3">
-                                        {MealItem.map((item) => (
+                                        {/* {MealItem.map((item) => (
                                             <div key={item.id} className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
                                                 <div>
                                                     <p className="font-medium">{item.name}</p>
@@ -290,7 +302,7 @@ const Suggestions = () => {
                                                     Remove
                                                 </Button>
                                             </div>
-                                        ))}
+                                        ))} */}
 
                                     </div>
                                 )}
