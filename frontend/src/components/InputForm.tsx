@@ -161,10 +161,10 @@ const UpdateProfileForm = () => {
 
   const token = localStorage.getItem("token");
 
-  if (!token) {
-    navigate("/sign-in");
-    return null;
-  }
+  // if (!token) {
+  //   navigate("/sign-in");
+  //   return null;
+  // }
 
   const handleCuisineToggle = (cuisine: string) => {
     console.log("Toggling cuisine:", cuisine);

@@ -35,6 +35,7 @@ import {
 import { Checkbox } from "./ui/checkbox";
 import { Alert, AlertDescription } from "./ui/alert";
 import { set } from "date-fns";
+import api from "@/lib/axios";
 
 type UserData = {
   name: string;
@@ -125,12 +126,8 @@ const Profile = () => {
   });
 
   const fetchUserData = async () => {
-    axios
-      .get(`/api/email/${email}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+    api
+      .get(`/email/${email}`)
       .then((response) => {
         const data = response.data;
         const fetchedUserData: UserData = {
@@ -162,10 +159,6 @@ const Profile = () => {
   };
   const [editedData, setEditedData] = useState<UserData>(userData);
   useEffect(() => {
-    if (!token) {
-      navigate("/sign-in");
-      return;
-    }
     fetchUserData();
   }, []);
 
@@ -184,12 +177,8 @@ const Profile = () => {
     } else {
       setError("")
       console.log(JSON.stringify(editedData));
-      const response = axios
-        .put(`/api/update/${email}`, editedData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
+      const response = api
+        .put(`/update/${email}`, editedData)
         .then((response) => {
           console.log("Response:", response.data);
           console.log("edited-Data", editedData);

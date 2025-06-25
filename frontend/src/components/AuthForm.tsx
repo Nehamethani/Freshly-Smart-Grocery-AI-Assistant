@@ -19,7 +19,7 @@ import {
   EyeOff,
   AlertCircle,
 } from "lucide-react";
-import { log } from "console";
+import api from "@/lib/axios";
 
 type LoginData = {
   username: string;
@@ -71,9 +71,8 @@ function AuthForm() {
     // Simulate login (in real app, this would be an API call)
     try {
       console.log("Logging in with:", loginData);
-      console.log("API URL:", "/api/login");
 
-      const response = await axios.post("/api/auth/authenticate", loginData);
+      const response = await api.post("/auth/authenticate", loginData);
 
       if (response.status === 200) {
         console.log("User logged in successfully:", response.data);
@@ -85,6 +84,8 @@ function AuthForm() {
       } else if (response.status === 401) {
         setError("Invalid email or password");
         toast.error("Invalid email or password");
+      } else if (response.status === 403) {
+        setError("Access denied. Authentication error.");
       } else {
         toast.error(response.data);
       }
