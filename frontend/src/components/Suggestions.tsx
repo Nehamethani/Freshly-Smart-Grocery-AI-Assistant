@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { use, useEffect, useState } from 'react'
+import React, { use, useEffect, useRef, useState } from 'react'
 import { Button } from './ui/button';
 import { ArrowLeft, ChefHat, Clock, Plus, ShoppingCart, Users } from 'lucide-react';
 import { Link } from 'react-router';
@@ -25,9 +25,6 @@ type GroceryItem = {
     mealType: string
     mealName: string // Optional, can be used to store the meal name if needed
 }
-
-
-
 
 interface MealItem {
   id: number | string;
@@ -57,7 +54,7 @@ const Suggestions = () => {
     const [response, setResponse] = useState<SuggestionMap[]>([]);
     const [groceryList, setGroceryList] = useState<GroceryItem[]>([]);
     const [MealItem, setMealItem] = useState<MealItem[]>([]);
-    const mealIngredientsMap = new Map<string, string[]>();
+    const mealIngredientsMapRef = useRef<Map<string, string[]>>(new Map());
 
     const prompt = `You are a meal suggestion system. 
     Based on the user's preferences,
@@ -104,13 +101,13 @@ const Suggestions = () => {
                 console.log('Response Data:', parsedData.suggestions);
                 setResponse(parsedData.suggestions)
 
-
-
+                const newMap = new Map<string, string[]>();
                 parsedData.suggestions.forEach((meal: { name: string; ingredients: string[]; }) => {
-                    mealIngredientsMap.set(meal.name, meal.ingredients);
+                    newMap.set(meal.name, meal.ingredients);
                 });
 
-                console.log(mealIngredientsMap);
+                mealIngredientsMapRef.current = newMap
+                console.log(newMap);
             } catch (error) {
                 console.error('Error fetching suggestions:', error);
             }
@@ -120,24 +117,25 @@ const Suggestions = () => {
         , [])
 
     const handleAddToList = (meal: SuggestionMap) => {
-        console.log('Adding meal to grocery list:', meal);
+        console.log('Adding meal to grocery list:', meal.name);
+        console.log('map list', mealIngredientsMapRef);
 
         // Check for duplicates
-        const existingItem = groceryList.find(
-            item => item.name === meal.name && item.mealType === meal.type
+        const existingItem = MealItem.find(
+            item => item.name === meal.name && item.mealName === meal.name
         );
         if (existingItem) {
             console.log('Meal already exists in grocery list:', existingItem);
             return;
         }
-
-        const ingredients = mealIngredientsMap.get(meal.name);
+        console.log(mealIngredientsMapRef);
+        const ingredients = mealIngredientsMapRef.current.get(meal.name);
         if (!ingredients) {
             console.warn(`No ingredients found for meal: ${meal.name}`);
             return;
         }
 
-        // Transform ingredients into proper objects with meal context
+        //Transform ingredients into proper objects with meal context
         const newItems = ingredients.map((ingredient, index) => ({
             id: Date.now() + index, // or use uuid
             name: ingredient,
@@ -147,7 +145,9 @@ const Suggestions = () => {
         }));
 
         // Add to meal item state
+        console.log(newItems);
         setMealItem(prevItems => [...prevItems, ...newItems]);
+        
     };
 
     const addToGroceryList = (item: GroceryItem) => {
@@ -222,7 +222,7 @@ const Suggestions = () => {
             <Tabs defaultValue="meals" className="space-y-8">
                 <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger value="meals">Meal Suggestions</TabsTrigger>
-                    <TabsTrigger value="grocery">Grocery List ({groceryList.length})</TabsTrigger>
+                    <TabsTrigger value="grocery">Grocery List ({MealItem.length})</TabsTrigger>
                 </TabsList>
 
 
@@ -286,23 +286,19 @@ const Suggestions = () => {
                             </CardHeader>
 
                             <CardContent>
-                                {groceryList.length === 0 ? (
+                                {MealItem.length === 0 ? (
                                     <p className="text-gray-500 text-center py-8">
                                         No items in your list yet. Add some from the suggestions!
                                     </p>
                                 ) : (
                                     <div className="space-y-3">
-                                        {/* {MealItem.map((item) => (
+                                        {MealItem.map((item) => (
                                             <div key={item.id} className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
                                                 <div>
-                                                    <p className="font-medium">{item.name}</p>
-                                                    <p className="text-sm text-gray-600">{item.type}</p>
+                                                    <p className="font-medium">{item.mealName}</p>
                                                 </div>
-                                                <Button size="sm" variant="outline" onClick={() => removeFromGroceryList(item.name)}>
-                                                    Remove
-                                                </Button>
                                             </div>
-                                        ))} */}
+                                        ))} 
 
                                     </div>
                                 )}
@@ -319,13 +315,13 @@ const Suggestions = () => {
                                 <p className="text-sm text-gray-600">{groceryList.length} items added</p>
                             </CardHeader>
                             <CardContent>
-                                {groceryList.length === 0 ? (
+                                {MealItem.length === 0 ? (
                                     <p className="text-gray-500 text-center py-8">
                                         No items in your list yet. Add some from the suggestions!
                                     </p>
                                 ) : (
                                     <div className="space-y-3">
-                                        {groceryList.map((item) => (
+                                        {MealItem.map((item) => (
                                             <div key={item.id} className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
                                                 <div>
                                                     <p className="font-medium">{item.name}</p>
