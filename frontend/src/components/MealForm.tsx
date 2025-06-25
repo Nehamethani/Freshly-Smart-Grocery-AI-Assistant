@@ -15,6 +15,7 @@ import { Checkbox } from "./ui/checkbox";
 import { Textarea } from "./ui/textarea";
 import axios from "axios";
 import { toast } from "react-toastify";
+import api from "@/lib/axios";
 
 interface DietInfo {
   allergies: string[];
@@ -84,14 +85,9 @@ const MealForm = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      if (!userEmail) {
-        navigate("/sign-in");
-        return;
-      }
-
       try {
         console.log("Fetching user data for email:", userEmail);
-        const response = await axios.get(`/api/email/${userEmail}`);
+        const response = await api.get(`/email/${userEmail}`);
         const data = response.data;
 
         setFormData((prev) => ({

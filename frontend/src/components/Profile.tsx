@@ -11,7 +11,7 @@ import {
   Shield,
   Users,
 } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Button } from "./ui/button";
 import { Link } from "react-router";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
@@ -104,8 +104,8 @@ const Profile = () => {
   const email = location.state?.email || localStorage.getItem("email") || "";
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState("");
- const [currentTab, setCurrentTab] = useState("profile");
-  const token = localStorage.getItem("token");
+  const [currentTab, setCurrentTab] = useState("profile");
+
   const [userData, setUserData] = useState<UserData>({
     name: "",
     email: "",
@@ -125,7 +125,9 @@ const Profile = () => {
     },
   });
 
-  const fetchUserData = async () => {
+  const [editedData, setEditedData] = useState<UserData>(userData);
+
+  const fetchUserData = useCallback(async () => {
     api
       .get(`/email/${email}`)
       .then((response) => {
@@ -156,8 +158,8 @@ const Profile = () => {
       .catch((error) => {
         console.error("Error fetching user data:", error);
       });
-  };
-  const [editedData, setEditedData] = useState<UserData>(userData);
+  }, [email, isEditing]);
+
   useEffect(() => {
     fetchUserData();
   }, []);
@@ -168,27 +170,26 @@ const Profile = () => {
     }
   }, [userData, isEditing]);
 
-  const handleSaveProfile = () => {
-    if(currentTab == "profile" && validateStep1() == false)
-    {
-        console.log("Error" ,error);
+  const handleSaveProfile = async () => {
+    setError("");
+    let isValid = true;
+    if (currentTab == "profile" && validateStep1() == false) {
+      console.log("Error", error);
+      isValid = false;
+    } else if (currentTab == "diet-info" && validateStep2() == false) {
+      isValid = false;
     }
-    else if (currentTab == "diet-info" && validateStep2() == false) {
-    } else {
-      setError("")
+    try {
+      setError("");
       console.log(JSON.stringify(editedData));
-      const response = api
-        .put(`/update/${email}`, editedData)
-        .then((response) => {
-          console.log("Response:", response.data);
-          console.log("edited-Data", editedData);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-          toast.error("Something went Wrong !!");
-        });
+      const response = await api.put(`/update/${email}`, editedData);
+      console.log("Changes saved successfully:");
+
+      await fetchUserData();
       setIsEditing(false);
-      fetchUserData();
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("Something went Wrong !!");
     }
   };
 
@@ -240,17 +241,25 @@ const Profile = () => {
       setError("Please fill in all personal information fields");
       return false;
     }
-    if (Number.parseInt(editedData.age) < 13 || Number.parseInt(editedData.age) > 120) {
-    
+    if (
+      Number.parseInt(editedData.age) < 13 ||
+      Number.parseInt(editedData.age) > 120
+    ) {
       setError("Please enter a valid age between 13 and 120");
-      console.log()
+      console.log();
       return false;
     }
-    if (Number.parseInt(editedData.height)< 100 || Number.parseInt(editedData.height) > 250) {
+    if (
+      Number.parseInt(editedData.height) < 100 ||
+      Number.parseInt(editedData.height) > 250
+    ) {
       setError("Please enter a valid height between 100-250 cm");
       return false;
     }
-    if (Number.parseInt(editedData.weight)< 30 || Number.parseInt(editedData.weight) > 300) {
+    if (
+      Number.parseInt(editedData.weight) < 30 ||
+      Number.parseInt(editedData.weight) > 300
+    ) {
       setError("Please enter a valid weight between 30-300 kg");
       return false;
     }
@@ -283,6 +292,7 @@ const Profile = () => {
   const handleLogOut = () => {
     localStorage.removeItem("email");
     localStorage.removeItem("freshlyUser");
+    localStorage.removeItem("token");
     navigate("/");
     toast.success("Logged out successfully");
   };
@@ -319,9 +329,11 @@ const Profile = () => {
         </p>
       </div>
 
-      <Tabs defaultValue="profile"
-       onValueChange={(value) => setCurrentTab(value)}
-      className="space-y-8">
+      <Tabs
+        defaultValue="profile"
+        onValueChange={(value) => setCurrentTab(value)}
+        className="space-y-8"
+      >
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="profile">Profile & Preferences</TabsTrigger>
           <TabsTrigger value="diet-info">Diet Info</TabsTrigger>
@@ -329,13 +341,10 @@ const Profile = () => {
           <TabsTrigger value="account">Account</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="profile"
-        className="space-y-6">
+        <TabsContent value="profile" className="space-y-6">
           <Card>
-            
             <CardHeader>
               <div className="flex justify-between items-center">
-               
                 <CardTitle>Personal Information</CardTitle>
                 {!isEditing ? (
                   <Button onClick={() => handleEditing(true)} variant="outline">
@@ -356,9 +365,8 @@ const Profile = () => {
                 )}
               </div>
             </CardHeader>
-            <CardContent className="space-y-6">            
+            <CardContent className="space-y-6">
               <div className="flex items-center space-x-6">
-                 
                 <div className="relative">
                   <Avatar className="h-24 w-24">
                     <AvatarImage
@@ -388,17 +396,15 @@ const Profile = () => {
                 </div>
               </div>
               {error && (
-                  <Alert variant="destructive" className="mb-6">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertDescription>{error}</AlertDescription>
-                  </Alert>
-                )}
+                <Alert variant="destructive" className="mb-6">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
 
               {/* Personal Details */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                 
                 <div>
-                  
                   <Label htmlFor="name">Name</Label>
                   <Input
                     id="name"

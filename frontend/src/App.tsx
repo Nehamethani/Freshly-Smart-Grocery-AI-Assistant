@@ -20,17 +20,6 @@ function App() {
       <Route path="/suggestions" element={<Suggestions />} />
     </Routes>
   );
-
-  //   const router = createBrowserRouter(
-  //   createRoutesFromElements(
-  //   <Route path='/' element={<HomePage/>}>
-  //   <Route path='/signup' element= {<SignUp/>}/>
-  //   <Route path='/update' element= {<InputForm/>}/>
-  //   </Route>
-
-  //   )
-  // );
-  // return <RouterProvider router={router} />;
 }
 
 export default App;
