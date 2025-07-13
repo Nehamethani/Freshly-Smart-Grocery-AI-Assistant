@@ -29,6 +29,12 @@ public class UserController {
     return ResponseEntity.status(HttpStatus.CREATED).body("User has been created successfully.");
   }
 
+  //  @PostMapping("/meal/data")
+  //  public ResponseEntity<User> addMealData(@RequestBody User user)
+  //  {
+  //
+  //  }
+
   @GetMapping("/email/{email}")
   public ResponseEntity<User> getUserEmail(@PathVariable String email) {
     log.info("Searching user with email id: {}", email);

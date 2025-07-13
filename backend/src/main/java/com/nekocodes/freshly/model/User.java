@@ -4,6 +4,8 @@ import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.List;
+
 @Document(collection = "users")
 @Getter
 @Setter
@@ -23,6 +25,7 @@ public class User {
   private double height;
   private double weight;
   private String activityLevel;
+  List<Meal> meals;
 
   // dietInfo class
   @Builder.Default private DietInfo dietInfo = new DietInfo();

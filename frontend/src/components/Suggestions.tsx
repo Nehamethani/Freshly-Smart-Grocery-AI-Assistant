@@ -34,6 +34,20 @@ interface MealItem {
   suggested: boolean;
 }
 
+type GroupedMeal = {
+  mealName: string;
+  ingredients: {
+    id: number;
+    name: string;
+    suggested: boolean;
+  }[];
+};
+
+type GroupedByMealType = {
+  mealType: string;
+  meals: GroupedMeal[];
+};
+
 
 const Suggestions = () => {
 
@@ -150,17 +164,60 @@ const Suggestions = () => {
         
     };
 
-    const addToGroceryList = (item: GroceryItem) => {
-        if (!groceryList.find((g) => g.id === item.id)) {
-            setGroceryList([...groceryList, item])
-        }
-    }
-
-    const removeFromGroceryList = (mealName: string) => {
-        setGroceryList((prevList) =>
-            prevList.filter((item) => item.mealName !== mealName)
+    
+    const removeFromGroceryList = (name: string) => {
+        console.log('Removing meal from grocery list:', name);
+        setMealItem((prevList) =>
+            prevList.filter((item) => item.name !== name)
         );
     };
+    const groupByMealTypeThenMealName = (data: MealItem[]): GroupedByMealType[] => {
+    const grouped: Record<string, Record<string, GroupedMeal>> = {};
+    console.log('Grouping data:', grouped);
+  data.forEach((item) => {
+    if (!grouped[item.mealType]) {
+      grouped[item.mealType] = {};
+    }
+
+    if (!grouped[item.mealType][item.mealName]) {
+      grouped[item.mealType][item.mealName] = {
+        mealName: item.mealName,
+        ingredients: [],
+      };
+    }
+
+    grouped[item.mealType][item.mealName].ingredients.push({
+        
+        id: item.id as number, // Ensure id is a number
+        name: item.name,
+        suggested: item.suggested,
+    });
+  });
+
+  // Convert to array structure
+  return Object.entries(grouped).map(([mealType, mealsObj]) => ({
+    mealType,
+    meals: Object.values(mealsObj),
+  }));
+};
+
+    const exportGroceryList = (flatList: MealItem[]) => {
+        console.log('Exporting grocery list:', flatList);
+        const result = groupByMealTypeThenMealName(flatList);
+        localStorage.setItem('groceryList', JSON.stringify(result));
+         //setMealItem([]); // Clear the meal item state after export
+        // const csvContent = MealItem.map(item => `${item.name},${item.mealName},${item.mealType}`).join('\n');
+        // const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        // const url = URL.createObjectURL(blob);
+        // const link = document.createElement('a');
+        // link.setAttribute('href', url);
+        // link.setAttribute('download', 'grocery_list.csv');
+        // link.style.visibility = 'hidden';
+        // document.body.appendChild(link);
+        // link.click();
+        // document.body.removeChild(link);
+    };
+
 
 
     return (
@@ -279,7 +336,7 @@ const Suggestions = () => {
 
                 <TabsContent value="grocery" className="space-y-6">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        <Card>
+                        {/* <Card>
                             <CardHeader>
                                 <CardTitle>Meal List</CardTitle>
                                 <p className="text-sm text-gray-600">Your Meal List will be added Here</p>
@@ -304,15 +361,15 @@ const Suggestions = () => {
                                 )}
                             </CardContent>
 
-                        </Card>
+                        </Card>  */}
 
                         <Card>
                             <CardHeader>
-                                <CardTitle className="flex items-center space-x-2">
+                                <CardTitle className="flex items-center space-x-8   ">
                                     <ShoppingCart className="h-5 w-5" />
                                     <span>Your Grocery List</span>
                                 </CardTitle>
-                                <p className="text-sm text-gray-600">{groceryList.length} items added</p>
+                                <p className="text-sm text-gray-600">{MealItem.length} items added</p>
                             </CardHeader>
                             <CardContent>
                                 {MealItem.length === 0 ? (
@@ -327,7 +384,7 @@ const Suggestions = () => {
                                                     <p className="font-medium">{item.name}</p>
                                                     <p className="text-sm text-gray-600">For Meal: {item.mealName}</p>
                                                 </div>
-                                                <Button size="sm" variant="outline" onClick={() => removeFromGroceryList(item.mealName)}>
+                                                <Button size="sm" variant="outline" onClick={() => removeFromGroceryList(item.name)}>
                                                     Remove
                                                 </Button>
                                             </div>
@@ -339,6 +396,17 @@ const Suggestions = () => {
                         </Card>
 
                     </div>
+                    { MealItem.length === 0 ? '' : 
+
+                        (
+                            <div className="pt-4 space-y-2">
+                                <Button  className="w-full bg-green-600 hover:bg-green-700" onClick={exportGroceryList(MealItem)}>
+                                  Export Grocery List
+                                </Button>
+                              </div>
+                        )
+                     }
+                      
                 </TabsContent>
             </Tabs>
 
