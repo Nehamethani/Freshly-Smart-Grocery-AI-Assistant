@@ -109,7 +109,7 @@ const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState("");
   const [currentTab, setCurrentTab] = useState("profile");
-  const groceryToDoList = JSON.parse(localStorage.getItem("groceryList") || "");
+  const groceryToDoList = JSON.parse(localStorage.getItem("groceryList") || "[]");
 
   const [userData, setUserData] = useState<UserData>({
     name: "",
@@ -138,12 +138,12 @@ const Profile = () => {
       .then((response) => {
         const data = response.data;
         const fetchedUserData: UserData = {
-          name: data.name,
+          name: data.name || "",
           email: data.email,
           age: data.age || 0,
           height: data.height || 0,
           weight: data.weight || 0,
-          gender: data.gender,
+          gender: data.gender || "",
           activityLevel: data.activityLevel || "",
           profileImage:
             data.profileImage || "/placeholder.svg?height=120&width=120",
@@ -168,6 +168,7 @@ const Profile = () => {
 
   useEffect(() => {
     fetchUserData();
+    console.log("User Data:", userData);
   }, []);
 
   useEffect(() => {
@@ -844,10 +845,10 @@ const Profile = () => {
                   {groceryToDoList.some((meal: any) => meal.mealType === "Breakfast")
                     ? groceryToDoList
                       .find((meal: any) => meal.mealType === "Breakfast")
-                      .mealItems.map((item: any) => (
+                      .meals.map((item: any) => (
                         <div
                           key={item.id}
-                          className="flex items-center space-x-2"
+                
                         >
                           <Checkbox
                             checked={item.suggested}
@@ -859,7 +860,25 @@ const Profile = () => {
                               );
                             }}
                           />
-                          <span>{item.name}</span>
+                          <p>{item.mealName}</p>
+                          <div className="ml-6">
+                            <ul className="list-disc pl-5">
+                              {item.ingredients.map((ingredient: any, index: number) => (
+                                <li key={ingredient.id} className="flex items-center space-x-2">
+                                  <Checkbox
+                                    checked={ingredient.done}
+                                    onCheckedChange={(checked) => {
+                                      ingredient.done = checked;
+                                      localStorage.setItem("groceryList", JSON.stringify(groceryToDoList));
+                                    }}
+                                  />
+                                  <span className={ingredient.done ? "line-through text-gray-500" : ""}>
+                                    {ingredient.name}
+                                  </span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
                         </div>
                       )) : <p className="text-gray-500 text-center py-8">
                       No items in your Breakfast list yet.
