@@ -94,7 +94,7 @@ const Suggestions = () => {
         const fetchSuggestions = async () => {
             try {
                 const apiUrl = 'https://api.openai.com/v1/responses';
-                const apiKey = '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';
+                const apiKey = '';
                 const headers = {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${apiKey}`,
