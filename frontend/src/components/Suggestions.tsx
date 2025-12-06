@@ -93,30 +93,18 @@ const Suggestions = () => {
     useEffect(() => {
         const fetchSuggestions = async () => {
             try {
-                const apiUrl = 'https://api.openai.com/v1/responses';
-                const apiKey = '';
-                const headers = {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${apiKey}`,
-                };
-
-                const requestBody = JSON.stringify(
-                    {
-                        "model": "gpt-4o-mini",
-                        "input": prompt,
-                    }
-                );
-                console.log('Request Body:', requestBody); // Log the request body for debugging
-                const { data } = await axios.post(apiUrl, requestBody, { headers });
-                console.log('Response Data:', data); // Log the response data for debugging
-                const cleaned = data.output[0].content[0].text.replace(/```json|```/g, '').trim();
-                console.log('Cleaned Response:', cleaned); // Log the cleaned response for debugging
-                const parsedData = JSON.parse(cleaned);
-                console.log('Response Data:', parsedData.suggestions);
-                setResponse(parsedData.suggestions)
-
+                const aiServiceUrl= "https://ai-service-808222674098.asia-south1.run.app/generate";
+                console.log("formData: ", formData);
+                const aiServiceResponse = await axios.post(aiServiceUrl, JSON.parse(formData));
+                console.log("aiServiceResponse: ", aiServiceResponse);
+                const suggestionData = aiServiceResponse.data.suggestions;
+                
+                console.log('Cleaned Response:', suggestionData); // Log the cleaned response for debugging
+                console.log('Response Data:', suggestionData);
+                setResponse(suggestionData)
+                
                 const newMap = new Map<string, string[]>();
-                parsedData.suggestions.forEach((meal: { name: string; ingredients: string[]; }) => {
+                suggestionData.forEach((meal: { name: string; ingredients: string[]; }) => {
                     newMap.set(meal.name, meal.ingredients);
                 });
 
